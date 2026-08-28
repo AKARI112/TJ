@@ -1,0 +1,2 @@
+import type { MetadataRoute } from "next";
+export default function manifest(): MetadataRoute.Manifest { return { name: "ذُو الجَلاَلْ", short_name: "ذُو الجَلاَلْ", description: "رفيقك الإسلامي العربي اليومي", start_url: "/", display: "standalone", background_color: "#f4f1e9", theme_color: "#315f50", lang: "ar", dir: "rtl", icons: [{ src: "/icon.svg", sizes: "any", type: "image/svg+xml", purpose: "any" }] }; }

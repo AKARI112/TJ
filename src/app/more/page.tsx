@@ -1,0 +1,3 @@
+import { Bell, Bookmark, HeartHandshake, MoonStar, Settings2, Sparkles } from "lucide-react";
+const links = [{href:"/adhkar",label:"الأذكار",icon:Sparkles},{href:"/dua",label:"الأدعية",icon:HeartHandshake},{href:"/hadith",label:"الحديث",icon:MoonStar},{href:"/saved",label:"المحفوظات",icon:Bookmark},{href:"/reminders",label:"التذكيرات",icon:Bell},{href:"/settings",label:"الإعدادات",icon:Settings2}];
+export default function MorePage() { return <main><header className="page-intro"><p className="eyebrow text-accent">المزيد</p><h1>كل ما تحتاجه، دون ازدحام</h1></header><div className="chapter-list">{links.map((item) => <a href={item.href} key={item.href} className="chapter-row"><item.icon className="size-5 text-accent" /><strong>{item.label}</strong></a>)}</div></main>; }

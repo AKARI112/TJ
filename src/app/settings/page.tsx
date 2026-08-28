@@ -1,0 +1,3 @@
+"use client";
+import { useTheme } from "next-themes";
+export default function SettingsPage() { const { theme, setTheme } = useTheme(); return <main><header className="page-intro"><p className="eyebrow text-accent">الإعدادات</p><h1>على طريقتك</h1><p>تُحفظ اختيارات الضيف محليًا.</p></header><section className="surface-panel"><h2 className="text-xl font-bold">المظهر</h2><div className="mt-4 flex flex-wrap gap-2">{[["light","فاتح"],["dark","داكن"],["system","النظام"]].map(([value,label]) => <button key={value} onClick={() => setTheme(value)} aria-pressed={theme === value} className={`rounded-full border px-4 py-2 text-sm ${theme === value ? "bg-primary text-primary-foreground" : "bg-card"}`}>{label}</button>)}</div></section></main>; }

@@ -1,0 +1,2 @@
+import { HeartHandshake } from "lucide-react";
+export default function DuaPage() { return <main><header className="page-intro"><p className="eyebrow text-accent">الأدعية</p><h1>دعاء بمصدر واضح</h1></header><div className="provider-error"><HeartHandshake className="size-7 text-accent" /><h1>مكتبة الأدعية تنتظر المصدر المدقق</h1><p>لن نعرض أدعية بلا مرجع أو نولّد نصوصًا دينية.</p><a href="/hadith" className="primary-link">استكشف الحديث</a></div></main>; }

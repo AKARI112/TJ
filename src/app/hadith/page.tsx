@@ -1,0 +1,5 @@
+import type { Metadata } from "next";
+import { MoonStar } from "lucide-react";
+import { getHadiths } from "@/lib/islamic/providers/hadith/hadeethenc";
+export const metadata: Metadata = { title: "الحديث النبوي" }; export const dynamic = "force-dynamic";
+export default async function HadithPage() { try { const items = await getHadiths(); return <main><header className="page-intro"><p className="eyebrow text-accent">الحديث</p><h1>المعنى، والدرجة، والمصدر</h1><p>لا نحتسب درجة الحديث؛ نعرضها فقط كما يوردها المصدر الموثوق في صفحة التفاصيل.</p></header><div className="hadith-list">{items.map((item) => <a href={`/hadith/${item.id}`} key={item.id} className="hadith-row"><MoonStar className="size-4 text-accent" /><span>{item.title}</span></a>)}</div><p className="source-line">المصدر: موسوعة الأحاديث النبوية — HadeethEnc</p></main>; } catch { return <div className="provider-error"><h1>تعذر تحميل الأحاديث حاليًا</h1><p>لن نعرض حديثًا أو درجة غير موثقة.</p><a href="/hadith" className="primary-link">إعادة المحاولة</a></div>; } }

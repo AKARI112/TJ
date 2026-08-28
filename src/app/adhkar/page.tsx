@@ -1,0 +1,2 @@
+import { Sparkles } from "lucide-react";
+export default function AdhkarPage() { return <main><header className="page-intro"><p className="eyebrow text-accent">الأذكار</p><h1>النص الصحيح قبل كل شيء</h1><p>لم نضمّن نصوصًا محلية قبل اكتمال تدقيق مجموعة حصن المسلم ومراجعها.</p></header><div className="provider-error"><Sparkles className="size-7 text-accent" /><h1>المصدر الموثق غير متاح في هذه النسخة</h1><p>بدل عرض نصوص ناقصة المرجع، أبقينا القسم واضحًا حتى تُربط مجموعة مدققة.</p><a href="/quran" className="primary-link">العودة إلى القرآن</a></div></main>; }
