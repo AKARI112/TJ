@@ -1,0 +1,29 @@
+.study-sheet { padding: 1rem; padding-block-end: max(1.5rem,env(safe-area-inset-bottom)); }
+.study-selectors { display: grid; gap: .65rem; }
+.study-loading { display: flex; min-height: 8rem; align-items: center; justify-content: center; gap: .55rem; color: var(--muted-foreground); font-size: .78rem; }
+.study-loading svg { width: 1rem; }
+.study-sheet > section { margin-block-start: 1rem; border-block-start: 1px solid var(--border); padding-block-start: 1rem; }
+.study-sheet > section header { display: flex; align-items: center; gap: .65rem; }
+.study-sheet > section header > svg { width: 1rem; color: var(--primary); }
+.study-sheet > section h3 { font-size: 1rem; font-weight: 700; }
+.study-sheet > section header p { color: var(--muted-foreground); font-size: .68rem; }
+.study-sheet > section > p { margin-block-start: .8rem; font-size: 1rem; line-height: 2; white-space: pre-line; }
+.reciter-profile-head { display: flex; align-items: center; gap: 1rem; border-block-end: 1px solid var(--border); padding-block-end: 1.25rem; }
+.reciter-profile-head .reciter-avatar { width: 4rem; height: 4rem; font-size: 1.3rem; }
+.reciter-profile-head h1 { font-size: clamp(1.5rem,4vw,2.4rem); font-weight: 750; }
+.reciter-profile-head p:last-child { color: var(--muted-foreground); font-size: .72rem; }
+.reciter-profile-head > button { display: inline-flex; min-height: 2.75rem; align-items: center; gap: .4rem; margin-inline-start: auto; border: 1px solid var(--border); border-radius: .8rem; padding-inline: .8rem; font-size: .72rem; }
+.reciter-profile-head > button svg { width: .9rem; }
+.reciter-moshaf { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-block: 1rem; }
+.reciter-moshaf > span { color: var(--muted-foreground); font-size: .75rem; }
+.reciter-moshaf > div { width: min(100%,22rem); }
+.surah-audio-list { border-block-start: 1px solid var(--border); }
+.surah-audio-list article { display: grid; grid-template-columns: 2.3rem minmax(0,1fr) auto; align-items: center; gap: .75rem; min-height: 4.5rem; border-block-end: 1px solid var(--border); }
+.surah-audio-list article > span { display: grid; width: 2rem; height: 2rem; place-items: center; border-radius: .65rem; background: var(--green-soft); color: var(--primary); font-size: .68rem; }
+.surah-audio-list h2 { font-weight: 650; }
+.surah-audio-list p { color: var(--muted-foreground); font-size: .66rem; }
+.surah-audio-list button { display: grid; width: 2.5rem; height: 2.5rem; place-items: center; border-radius: 50%; background: var(--primary); color: var(--primary-foreground); }
+.surah-audio-list button svg { width: .95rem; }
+@media (min-width:760px) { .study-selectors { grid-template-columns: 1fr 1fr; } }
+@media (max-width:520px) { .reciter-profile-head { align-items: flex-start; flex-wrap: wrap; } .reciter-profile-head > button { width: 100%; margin-inline-start: 0; justify-content: center; } .reciter-moshaf { align-items: stretch; flex-direction: column; } .reciter-moshaf > div { width: 100%; } }
+

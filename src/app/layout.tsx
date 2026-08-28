@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Amiri_Quran, Fustat } from "next/font/google";
+import { Fustat } from "next/font/google";
 import { AppShell } from "@/components/app/app-shell";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ServiceWorkerRegister } from "@/components/pwa/service-worker-register";
@@ -8,13 +8,6 @@ import "./globals.css";
 const fustat = Fustat({
   variable: "--font-fustat",
   subsets: ["arabic", "latin"],
-  display: "swap",
-});
-
-const amiriQuran = Amiri_Quran({
-  variable: "--font-quran",
-  subsets: ["arabic"],
-  weight: "400",
   display: "swap",
 });
 
@@ -56,8 +49,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: "cover",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f4f1e9" },
-    { media: "(prefers-color-scheme: dark)", color: "#111512" },
+    { media: "(prefers-color-scheme: light)", color: "#f5f5f3" },
+    { media: "(prefers-color-scheme: dark)", color: "#101113" },
   ],
 };
 
@@ -67,7 +60,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="ar"
       dir="rtl"
       suppressHydrationWarning
-      className={`${fustat.variable} ${amiriQuran.variable}`}
+      className={fustat.variable}
     >
       <body>
         <ThemeProvider>

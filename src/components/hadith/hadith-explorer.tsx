@@ -1,0 +1,11 @@
+"use client";
+import { useMemo, useState } from "react";
+import Link from "next/link";
+import { ChevronLeft, ChevronRight, MoonStar, Search } from "lucide-react";
+import type { HadithCategory, HadithPage } from "@/domain/hadith";
+import { Input } from "@/components/motion/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/motion/select";
+import { normalizeArabicSearch } from "@/lib/islamic/search";
+import { useRouter } from "next/navigation";
+
+export function HadithExplorer({ categories, page, categoryId }: { categories: HadithCategory[]; page: HadithPage; categoryId: string }) { const router = useRouter(); const [query, setQuery] = useState(""); const filtered = useMemo(() => { const needle = normalizeArabicSearch(query); return needle ? page.items.filter((item) => normalizeArabicSearch(item.title).includes(needle)) : page.items; }, [page.items, query]); const url = (nextPage: number, nextCategory = categoryId) => `/hadith?category=${nextCategory}&page=${nextPage}`; return <><div className="hadith-toolbar"><Select value={categoryId} onValueChange={(value) => router.push(url(1, value))}><SelectTrigger><SelectValue placeholder="التصنيف" /></SelectTrigger><SelectContent>{categories.map((category) => <SelectItem value={category.id} key={category.id}>{category.title} ({category.count})</SelectItem>)}</SelectContent></Select><Input value={query} onChange={setQuery} placeholder="ابحث في الصفحة الحالية" leftIcon={<Search />} /></div><div className="hadith-list">{filtered.map((item) => <Link href={`/hadith/${item.id}`} key={item.id} className="hadith-row"><MoonStar className="size-4 text-accent" /><span>{item.title}</span></Link>)}</div>{!filtered.length && <div className="compact-empty">لا توجد نتائج في هذه الصفحة.</div>}<nav className="pagination" aria-label="صفحات الأحاديث"><Link aria-disabled={page.currentPage <= 1} href={url(Math.max(1, page.currentPage - 1))}><ChevronRight />السابق</Link><span>صفحة {page.currentPage} من {page.lastPage} · {page.totalItems} حديثًا</span><Link aria-disabled={page.currentPage >= page.lastPage} href={url(Math.min(page.lastPage, page.currentPage + 1))}>التالي<ChevronLeft /></Link></nav></>; }

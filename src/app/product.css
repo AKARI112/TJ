@@ -1,0 +1,67 @@
+.prayer-settings { display: grid; gap: .75rem; margin-block-end: 1.25rem; }
+.hour-switch { display: flex; min-height: 3rem; align-items: center; justify-content: space-between; gap: 1rem; border: 1px solid var(--border); border-radius: .9rem; background: var(--card); padding-inline: .9rem; font-size: .78rem; }
+.next-prayer-banner { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-block-end: 1rem; border: 1px solid color-mix(in srgb, var(--primary) 30%, var(--border)); border-radius: 1.4rem; background: var(--green-soft); padding: 1.25rem; }
+.next-prayer-banner p, .next-prayer-banner span { color: var(--muted-foreground); font-size: .72rem; }
+.next-prayer-banner h2 { margin-block: .2rem; font-size: 1.55rem; font-weight: 730; }
+.next-prayer-banner > div:last-child { text-align: end; }
+.next-prayer-banner strong { display: block; color: var(--primary); font-size: clamp(1.55rem, 5vw, 2.4rem); font-variant-numeric: tabular-nums; }
+.prayer-time.is-current { border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); }
+.prayer-time.is-next { border-color: color-mix(in srgb, var(--primary) 65%, var(--border)); background: var(--green-soft); }
+.night-times { display: grid; grid-template-columns: repeat(3, 1fr); gap: .5rem; margin-block-start: .75rem; }
+.night-times > div { border-block-start: 1px solid var(--border); padding-block: .8rem; }
+.night-times span, .night-times strong { display: block; }
+.night-times span { color: var(--muted-foreground); font-size: .68rem; }
+.night-times strong { margin-block-start: .25rem; font-size: .95rem; }
+.manual-location { display: flex; width: min(100%, 30rem); gap: .5rem; }
+.manual-location > div { flex: 1; }
+.manual-location > button, .time-input { min-height: 3rem; border: 1px solid var(--border); border-radius: .9rem; background: var(--card); padding-inline: .9rem; font-size: .78rem; }
+.compass-face { transition: transform 180ms linear; }
+.calibration-help { max-width: 30rem; color: var(--muted-foreground); font-size: .75rem; }
+.calibration-help summary { cursor: pointer; color: var(--primary); }
+.calibration-help p { margin-block-start: .5rem; }
+.next-reminder { margin-block-end: 1rem; border-inline-start: 3px solid var(--primary); background: var(--green-soft); padding: 1rem 1.25rem; }
+.next-reminder > span, .next-reminder p { color: var(--muted-foreground); font-size: .72rem; }
+.next-reminder h2 { margin-block: .25rem; font-size: 1.25rem; font-weight: 700; }
+.reminder-form { display: grid; gap: .75rem; border-block: 1px solid var(--border); padding-block: 1.25rem; }
+.weekday-picker { display: flex; align-items: center; gap: .35rem; flex-wrap: wrap; }
+.weekday-picker legend { width: 100%; margin-block-end: .25rem; color: var(--muted-foreground); font-size: .7rem; }
+.weekday-picker button { display: grid; width: 2.45rem; height: 2.45rem; place-items: center; border: 1px solid var(--border); border-radius: 50%; color: var(--muted-foreground); font-size: .72rem; }
+.weekday-picker button[aria-pressed="true"] { border-color: color-mix(in srgb, var(--primary) 50%, var(--border)); background: var(--green-soft); color: var(--primary); }
+.reminder-list { margin-block-start: 1rem; border-block-start: 1px solid var(--border); }
+.reminder-row { display: grid; grid-template-columns: auto minmax(0,1fr) auto auto auto; align-items: center; gap: .75rem; min-height: 5rem; border-block-end: 1px solid var(--border); }
+.reminder-row > svg { width: 1rem; color: var(--accent); }
+.reminder-row h2 { font-weight: 650; }
+.reminder-row p { margin-block-start: .2rem; color: var(--muted-foreground); font-size: .68rem; }
+.reminder-row > button { display: grid; width: 2.4rem; height: 2.4rem; place-items: center; border-radius: .7rem; color: var(--muted-foreground); }
+.reminder-row > button:hover { background: var(--muted); color: var(--foreground); }
+.reminder-row > button svg { width: .95rem; }
+.hadith-toolbar { display: grid; gap: .75rem; margin-block-end: 1rem; }
+.pagination { display: flex; align-items: center; justify-content: space-between; gap: .75rem; padding-block: 1.25rem; color: var(--muted-foreground); font-size: .72rem; }
+.pagination a { display: inline-flex; min-height: 2.5rem; align-items: center; gap: .35rem; color: var(--foreground); }
+.pagination a[aria-disabled="true"] { pointer-events: none; opacity: .35; }
+.pagination svg { width: .9rem; }
+.hadith-actions { display: flex; gap: .5rem; margin-block-start: 1.25rem; flex-wrap: wrap; }
+.daily-text { margin-block-start: 1.5rem; font-size: clamp(1.15rem,2.5vw,1.45rem); line-height: 2.1; }
+.daily-actions { display:flex; align-items:center; gap:.45rem; margin-block-start:1.25rem; flex-wrap:wrap; }
+.daily-actions > button { display:inline-flex; min-height:2.75rem; align-items:center; gap:.4rem; border:1px solid var(--border); border-radius:.8rem; padding-inline:.8rem; font-size:.72rem; }
+.daily-actions > button svg { width:.9rem; }
+.home-countdown { display:block; color:#f2f3f5; font-size:clamp(1.8rem,5vw,3rem); font-variant-numeric:tabular-nums; }
+.recent-activity { display:flex; gap:.6rem; margin-block-start:1rem; overflow-x:auto; scroll-snap-type:inline mandatory; padding-block-end:.3rem; }
+.recent-activity a { display:grid; min-width:min(78vw,17rem); min-height:6rem; scroll-snap-align:start; grid-template-columns:1fr auto; align-content:center; gap:.25rem .75rem; border:1px solid var(--border); border-radius:1rem; background:var(--card); padding:1rem; }
+.recent-activity span { color:var(--primary); font-size:.65rem; }.recent-activity strong { grid-column:1; font-size:.9rem; }.recent-activity svg { grid-column:2; grid-row:1/3; align-self:center; width:1rem; color:var(--muted-foreground); }
+
+@media (min-width: 760px) {
+  .prayer-settings { grid-template-columns: 1.25fr 1.25fr 1fr; }
+  .reminder-form { grid-template-columns: 1fr 1.4fr auto; align-items: end; }
+  .reminder-form .weekday-picker { grid-column: 1 / -1; }
+  .reminder-form .primary-link { grid-column: 1 / -1; justify-self: start; }
+  .hadith-toolbar { grid-template-columns: minmax(15rem,.65fr) minmax(15rem,1fr); }
+}
+@media (max-width: 520px) {
+  .manual-location { flex-direction: column; }
+  .next-prayer-banner { align-items: flex-start; flex-direction: column; }
+  .next-prayer-banner > div:last-child { text-align: start; }
+  .reminder-row { grid-template-columns: auto minmax(0,1fr) auto; }
+  .reminder-row > button { grid-row: 2; }
+  .pagination span { text-align: center; }
+}

@@ -8,3 +8,4 @@ export async function getReciters(): Promise<Reciter[]> {
   if (!response.ok) throw new Error(`MP3Quran: ${response.status}`); const payload = schema.parse(await response.json());
   return payload.reciters.map((item) => ({ id: item.id, name: item.name, provider: "MP3Quran", sourceUrl: "https://mp3quran.net/ar/api", moshaf: item.moshaf.map((m) => ({ id: m.id, name: m.name, server: m.server, availableSurahs: m.surah_list.split(",").map(Number).filter(Boolean) })) }));
 }
+export async function getReciter(id: number) { return (await getReciters()).find((reciter) => reciter.id === id); }

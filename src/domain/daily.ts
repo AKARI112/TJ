@@ -1,0 +1,1 @@
+export interface DailyContent { id: string; type: "Quran" | "Hadith" | "Dua"; title: string; text: string; source: string; canonicalId: string; reference: string; grade?: string; date: string; href: string; provider: string; sourceUrl?: string; }

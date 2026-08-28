@@ -1,0 +1,3 @@
+import { describe, expect, it } from "vitest";
+import { nextReminderOccurrence, sanitizeReminderLabel } from "./reminders";
+describe("reminder scheduling", () => { it("sanitizes private labels before persistence", () => expect(sanitizeReminderLabel(" <ورد>\u0000 ")).toBe("ورد")); it("finds the next enabled occurrence", () => { const next = nextReminderOccurrence({ id: "1", type: "quran", label: "ورد", enabled: true, time: "20:00", days: [5], timezone: "Asia/Riyadh", createdAt: new Date().toISOString() }, new Date(2026, 7, 28, 12)); expect(next?.getDay()).toBe(5); expect(next?.getHours()).toBe(20); }); });

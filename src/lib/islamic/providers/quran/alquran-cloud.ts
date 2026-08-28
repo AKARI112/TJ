@@ -39,3 +39,10 @@ export async function getChapter(id: number): Promise<ProviderResult<QuranChapte
     provider: "AlQuran Cloud", sourceUrl: `https://alquran.cloud/surah/${id}`, cached: false,
   };
 }
+
+export async function searchQuran(query: string) {
+  const response = await fetch(`${BASE_URL}/search/${encodeURIComponent(query)}/all/quran-uthmani`, { next: { revalidate: 60 * 60 * 24 } });
+  if (!response.ok) throw new Error(`AlQuran Cloud search: ${response.status}`);
+  const payload = z.object({ data: z.object({ matches: z.array(z.object({ number: z.number(), text: z.string(), numberInSurah: z.number(), surah: z.object({ number: z.number(), name: z.string() }) })) }) }).parse(await response.json());
+  return payload.data.matches.map((match) => ({ id: `quran:${match.surah.number}:${match.numberInSurah}`, title: `${match.surah.name} · ${match.surah.number}:${match.numberInSurah}`, description: match.text, href: `/quran/${match.surah.number}#ayah-${match.numberInSurah}`, type: "quran" as const }));
+}

@@ -16,17 +16,22 @@ const schema = z.object({ data: z.object({
 
 const cleanTime = (value: string) => value.match(/^\d{1,2}:\d{2}/)?.[0] ?? value;
 
-export async function getPrayerDay(latitude: number, longitude: number, method = 4): Promise<PrayerDay> {
-  const params = new URLSearchParams({ latitude: String(latitude), longitude: String(longitude), method: String(method) });
+function normalizePrayerDay(payload: z.infer<typeof schema>, location: { latitude?: number; longitude?: number; locationLabel?: string }): PrayerDay {
+  const { data } = payload;
+  const extendedKeys = [{ key: "Midnight" as const, label: "منتصف الليل" }, { key: "Firstthird" as const, label: "الثلث الأول" }, { key: "Lastthird" as const, label: "الثلث الأخير" }];
+  return { dateGregorian: data.date.readable, dateHijri: `${data.date.hijri.day} ${data.date.hijri.month.ar} ${data.date.hijri.year} هـ`, method: data.meta.method.name, timezone: data.meta.timezone, ...location, timings: timingKeys.map((item) => ({ ...item, time: cleanTime(data.timings[item.key]) })), extended: extendedKeys.filter((item) => data.timings[item.key]).map((item) => ({ ...item, time: cleanTime(data.timings[item.key]) })), provider: "AlAdhan / Islamic Network", sourceUrl: "https://aladhan.com/prayer-times-api" };
+}
+
+export async function getPrayerDay(latitude: number, longitude: number, method = 4, school = 0): Promise<PrayerDay> {
+  const params = new URLSearchParams({ latitude: String(latitude), longitude: String(longitude), method: String(method), school: String(school) });
   const response = await fetch(`https://api.aladhan.com/v1/timings?${params}`, { next: { revalidate: 900 } });
   if (!response.ok) throw new Error(`AlAdhan timings: ${response.status}`);
-  const payload = schema.parse(await response.json());
-  const { data } = payload;
-  return {
-    dateGregorian: data.date.readable,
-    dateHijri: `${data.date.hijri.day} ${data.date.hijri.month.ar} ${data.date.hijri.year} هـ`,
-    method: data.meta.method.name, timezone: data.meta.timezone, latitude, longitude,
-    timings: timingKeys.map((item) => ({ ...item, time: cleanTime(data.timings[item.key]) })),
-    provider: "AlAdhan / Islamic Network", sourceUrl: "https://aladhan.com/prayer-times-api",
-  };
+  return normalizePrayerDay(schema.parse(await response.json()), { latitude, longitude });
+}
+
+export async function getPrayerDayByAddress(address: string, method = 4, school = 0): Promise<PrayerDay> {
+  const params = new URLSearchParams({ address, method: String(method), school: String(school) });
+  const response = await fetch(`https://api.aladhan.com/v1/timingsByAddress?${params}`, { next: { revalidate: 900 } });
+  if (!response.ok) throw new Error(`AlAdhan timingsByAddress: ${response.status}`);
+  return normalizePrayerDay(schema.parse(await response.json()), { locationLabel: address });
 }

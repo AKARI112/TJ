@@ -1,0 +1,3 @@
+import type { DailyContent } from "@/domain/daily";
+import { getDevotionalCategories } from "@/lib/islamic/providers/adhkar/local-hisn";
+export function getDailyContent(date = new Date()): DailyContent { const items = getDevotionalCategories("dua").flatMap((category) => category.items); const day = Math.floor(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()) / 86_400_000); const item = items[day % items.length]; return { id: `daily:${date.toISOString().slice(0,10)}`, type: "Dua", title: "دعاء اليوم", text: item.arabic, source: item.source, canonicalId: item.id, reference: item.source, date: date.toISOString().slice(0,10), href: `/dua/${item.id}?category=${item.category}`, provider: item.provider, sourceUrl: item.sourceUrl }; }

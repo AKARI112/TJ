@@ -1,8 +1,13 @@
 "use client";
 
-import { ArrowLeft, Bell, BookOpenText, Compass, Headphones, LocateFixed, MoonStar, Sparkles } from "lucide-react";
+import { ArrowLeft, Bell, Bookmark, BookOpenText, Compass, Copy, Headphones, Sparkles } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { ExpandableTabs } from "@/components/motion/expandable-tabs";
+import type { HistoryItem, ReadingProgress, Reminder } from "@/domain/personal";
+import { historyRepository, progressRepository, reminderRepository, savedRepository } from "@/lib/storage/repositories";
+import type { DailyContent } from "@/domain/daily";
+import { ShareComposer } from "@/components/share/share-composer";
+import { HomePrayerCard } from "@/components/home/home-prayer-card";
 
 function useToday() {
   const [now, setNow] = useState<Date | null>(null);
@@ -14,8 +19,16 @@ function useToday() {
   return now;
 }
 
-export function HomeDashboard() {
+export function HomeDashboard({ daily }: { daily: DailyContent }) {
   const now = useToday();
+  const [progress, setProgress] = useState<ReadingProgress | null>(null);
+  const [nextReminder, setNextReminder] = useState<Reminder | null>(null);
+  const [recent, setRecent] = useState<HistoryItem[]>([]);
+  useEffect(() => {
+    void progressRepository.current().then((item) => setProgress(item ?? null));
+    void reminderRepository.list().then((items) => setNextReminder(items.find((item) => item.enabled) ?? null));
+    void historyRepository.list().then((items) => setRecent(items.slice(0, 5)));
+  }, []);
   const date = useMemo(() => now?.toLocaleDateString("ar-SA", { weekday: "long", day: "numeric", month: "long", year: "numeric" }) ?? "…", [now]);
   const hijri = useMemo(() => now?.toLocaleDateString("ar-SA-u-ca-islamic-umalqura", { day: "numeric", month: "long", year: "numeric" }) ?? "…", [now]);
 
@@ -40,30 +53,18 @@ export function HomeDashboard() {
       </section>
 
       <div className="dashboard-grid">
-        <section className="prayer-card" aria-labelledby="next-prayer-title">
-          <div className="relative z-10 flex h-full flex-col justify-between">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="eyebrow" id="next-prayer-title">الصلاة التالية</p>
-                <h2 className="mt-4 text-[2rem] font-[720] leading-tight">مواقيت دقيقة لموقعك</h2>
-                <p className="mt-2 max-w-md text-sm leading-7 text-white/70">نطلب موقعك عند الحاجة فقط، ونحتفظ بالتفضيل على جهازك.</p>
-              </div>
-              <MoonStar className="size-6 text-[#e8c8a7]" aria-hidden="true" />
-            </div>
-            <a href="/prayer" className="primary-action mt-8 self-start"><LocateFixed className="size-4" />تفعيل مواقيت الصلاة</a>
-          </div>
-        </section>
+        <HomePrayerCard />
 
         <section className="surface-panel continue-card" aria-labelledby="continue-title">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <p className="eyebrow text-accent">تابع القراءة</p>
-              <h2 id="continue-title" className="mt-3 text-2xl font-[700]">ابدأ رحلتك مع القرآن</h2>
-              <p className="mt-2 text-sm leading-7 text-muted-foreground">سيُحفظ موضعك الأخير على هذا الجهاز تلقائيًا.</p>
+              <p className="eyebrow text-primary">تابع القراءة</p>
+              <h2 id="continue-title" className="mt-3 text-2xl font-[700]">{progress ? progress.chapterName : "ابدأ رحلتك مع القرآن"}</h2>
+              <p className="mt-2 text-sm leading-7 text-muted-foreground">{progress ? `الآية ${progress.verseNumber.toLocaleString("ar-SA")} · الصفحة ${progress.pageNumber.toLocaleString("ar-SA")} · وضع القراءة` : "سيُحفظ موضعك الأخير على هذا الجهاز تلقائيًا."}</p>
             </div>
             <div className="progress-orbit" aria-hidden="true"><BookOpenText className="size-5" /></div>
           </div>
-          <a href="/quran" className="text-action mt-8">افتح المصحف <ArrowLeft className="size-4" /></a>
+          <a href={progress ? `/quran/${progress.chapterId}#ayah-${progress.verseNumber}` : "/quran"} className="text-action mt-8">{progress ? "تابع من حيث توقفت" : "افتح القرآن"} <ArrowLeft className="size-4" /></a>
         </section>
       </div>
 
@@ -84,21 +85,23 @@ export function HomeDashboard() {
         </div>
       </section>
 
+      {recent.length > 0 && <section className="mt-8" aria-labelledby="recent-title"><div className="section-heading"><div><p className="eyebrow text-primary">نشاطك</p><h2 id="recent-title">عد إلى ما فتحته مؤخرًا</h2></div></div><div className="recent-activity">{recent.map((item) => <a href={item.href} key={item.id}><span>{item.type === "hadith" ? "حديث" : item.type === "reciter" ? "تلاوة" : item.type === "adhkar" ? "ذكر" : "قراءة"}</span><strong>{item.title}</strong><ArrowLeft /></a>)}</div></section>}
+
       <section className="daily-layout mt-8" aria-labelledby="daily-title">
         <article className="surface-panel daily-card">
           <div className="flex items-start justify-between gap-4">
-            <div><p className="eyebrow text-accent">نور اليوم</p><h2 id="daily-title" className="mt-3 text-xl font-[700]">محتوى موثّق يتجدد كل يوم</h2></div>
-            <span className="source-badge">المصدر ظاهر دائمًا</span>
+            <div><p className="eyebrow text-accent">نور اليوم</p><h2 id="daily-title" className="mt-3 text-xl font-[700]">{daily.title}</h2></div>
+            <span className="source-badge">{daily.type === "Dua" ? "دعاء" : daily.type}</span>
           </div>
-          <div className="mt-8 rounded-2xl border border-dashed border-border p-6 text-center">
-            <p className="text-sm leading-7 text-muted-foreground">سيظهر هنا نص قرآني أو حديث أو دعاء بعد تحميله مباشرة من المزوّد الموثوق، دون توليد أو تعديل.</p>
-          </div>
+          <p className="daily-text" lang="ar" dir="rtl">{daily.text}</p>
+          <div className="daily-actions"><button type="button" onClick={() => void savedRepository.save({ id: daily.id, type: "daily-content", title: daily.title, excerpt: daily.text, href: daily.href, provider: daily.provider, sourceUrl: daily.sourceUrl, reference: daily.reference, createdAt: new Date().toISOString() })}><Bookmark />حفظ</button><button type="button" onClick={() => void navigator.clipboard.writeText(`${daily.text}\n\n${daily.reference}`)}><Copy />نسخ</button><ShareComposer text={daily.text} reference={daily.reference} title={daily.title} compact={false} /></div>
+          <footer className="content-attribution"><span>{daily.reference}</span><a href={daily.href}>عرض النص</a></footer>
         </article>
 
         <aside className="surface-panel reminder-card" aria-labelledby="reminder-title">
           <Bell className="size-5 text-accent" /><p className="eyebrow mt-6 text-accent">تذكيرك التالي</p>
-          <h2 id="reminder-title" className="mt-3 text-xl font-[700]">اجعل وردك قريبًا</h2>
-          <p className="mt-2 text-sm leading-7 text-muted-foreground">أضف تذكيرًا مرنًا للقراءة أو الأذكار في الوقت المناسب لك.</p>
+          <h2 id="reminder-title" className="mt-3 text-xl font-[700]">{nextReminder?.label ?? "اجعل وردك قريبًا"}</h2>
+          <p className="mt-2 text-sm leading-7 text-muted-foreground">{nextReminder ? `موعده ${nextReminder.time} حسب توقيت جهازك` : "أضف تذكيرًا مرنًا للقراءة أو الأذكار في الوقت المناسب لك."}</p>
           <a href="/reminders" className="text-action mt-6">إضافة تذكير <ArrowLeft className="size-4" /></a>
         </aside>
       </section>

@@ -1,2 +1,5 @@
-import { HeartHandshake } from "lucide-react";
-export default function DuaPage() { return <main><header className="page-intro"><p className="eyebrow text-accent">الأدعية</p><h1>دعاء بمصدر واضح</h1></header><div className="provider-error"><HeartHandshake className="size-7 text-accent" /><h1>مكتبة الأدعية تنتظر المصدر المدقق</h1><p>لن نعرض أدعية بلا مرجع أو نولّد نصوصًا دينية.</p><a href="/hadith" className="primary-link">استكشف الحديث</a></div></main>; }
+import { DuaLibrary } from "@/components/devotional/dua-library";
+import { getDevotionalCategories } from "@/lib/islamic/providers/adhkar/local-hisn";
+
+export const metadata = { title: "الأدعية" };
+export default function DuaPage() { const categories = getDevotionalCategories("dua"); return <main><header className="page-intro"><p className="eyebrow text-accent">الأدعية</p><h1>دعاء بمصدرٍ ظاهر</h1><p>ابحث في الأدعية اليومية والمختارة، واحفظ ما تحتاجه للعودة إليه.</p></header><DuaLibrary categories={categories} /></main>; }

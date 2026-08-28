@@ -5,7 +5,7 @@ import {
   Headphones, HeartHandshake, Home, Menu, MoonStar, Settings2, Sparkles,
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import {
   AnimatedSidebar, AnimatedSidebarContent, AnimatedSidebarFooter,
   AnimatedSidebarGroup, AnimatedSidebarGroupContent, AnimatedSidebarGroupLabel,
@@ -13,8 +13,10 @@ import {
   AnimatedSidebarMenuButton, AnimatedSidebarMenuItem, AnimatedSidebarProvider,
   AnimatedSidebarRail, AnimatedSidebarTrigger,
 } from "@/components/motion/animated-sidebar";
-import { MorphingSearch } from "@/components/motion/morphing-search";
+import { UniversalSearch } from "@/components/search/universal-search";
+import { BottomSheet } from "@/components/motion/bottom-sheet";
 import { ThemeToggle } from "@/components/motion/theme-toggle";
+import { GlobalAudioPlayer } from "@/components/audio/global-player";
 
 const navigation = [
   { href: "/", label: "الرئيسية", icon: Home, group: "اليوم" },
@@ -24,6 +26,7 @@ const navigation = [
   { href: "/qibla", label: "القبلة", icon: Compass, group: "العبادة" },
   { href: "/adhkar", label: "الأذكار", icon: Sparkles, group: "الذِكر" },
   { href: "/dua", label: "الأدعية", icon: HeartHandshake, group: "الذِكر" },
+  { href: "/hisn", label: "حصن المسلم", icon: Bookmark, group: "الذِكر" },
   { href: "/hadith", label: "الحديث", icon: MoonStar, group: "العلم" },
   { href: "/saved", label: "المحفوظات", icon: Bookmark, group: "شخصي" },
   { href: "/reminders", label: "التذكيرات", icon: Bell, group: "شخصي" },
@@ -40,16 +43,17 @@ const searchItems = navigation.map((item) => ({
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
+  const [moreOpen, setMoreOpen] = useState(false);
 
   return (
     <AnimatedSidebarProvider
       defaultOpen
       style={{ "--sidebar-width": "17.5rem", "--sidebar-width-icon": "4.75rem", "--sidebar-width-mobile": "19rem" }}
     >
-      <AnimatedSidebar side="right" variant="inset" collapsible="icon" ariaLabel="التنقل الرئيسي" panelClassName="border border-border/70 bg-card/80">
+      <AnimatedSidebar side="right" variant="inset" collapsible="icon" ariaLabel="التنقل الرئيسي" panelClassName="border-e border-border bg-card">
         <AnimatedSidebarHeader className="border-b border-border/60 p-4">
           <div className="flex min-h-11 items-center gap-3 overflow-hidden px-1">
-            <div className="brand-mark" aria-hidden="true">ذ</div>
+            <div className="brand-signature" aria-hidden="true"><span>ذُو</span><i /></div>
             <div className="min-w-0 whitespace-nowrap group-data-[state=collapsed]/sidebar-wrapper:hidden">
               <p className="text-lg font-[750] leading-none text-foreground">ذُو الجَلاَلْ</p>
               <p className="mt-1 text-[11px] text-muted-foreground">رفيق يومك بهدوء</p>
@@ -95,7 +99,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <AnimatedSidebarRail aria-label="طي القائمة الجانبية" />
       </AnimatedSidebar>
 
-      <AnimatedSidebarInset className="min-h-dvh bg-background pb-28 md:pb-8">
+      <AnimatedSidebarInset className="min-h-dvh bg-background pb-44 md:pb-28">
         <header className="sticky top-0 z-30 flex h-18 items-center justify-between border-b border-border/65 bg-background/88 px-4 backdrop-blur-xl md:px-8">
           <div className="flex items-center gap-3">
             <AnimatedSidebarTrigger className="text-muted-foreground hover:bg-muted md:hidden" aria-label="فتح القائمة">
@@ -105,20 +109,13 @@ export function AppShell({ children }: { children: ReactNode }) {
             <p className="hidden text-sm text-muted-foreground md:block">مساحتك الهادئة للقرآن والعبادة</p>
           </div>
           <div className="flex items-center gap-2">
-            <MorphingSearch
-              items={searchItems}
-              placeholder="ابحث في ذُو الجَلاَلْ"
-              shortcut="f"
-              emptyMessage="لا توجد نتائج مطابقة"
-              iconOnly
-              onSelect={(item) => router.push(item.id)}
-              className="size-10"
-            />
-            <ThemeToggle variant="circle" start="top-left" className="size-10 rounded-xl border border-border/70 bg-card text-foreground" iconClassName="size-[18px]" />
+            <UniversalSearch initialItems={searchItems} />
+            <ThemeToggle variant="circle" start="top-right" className="size-10 rounded-xl border border-border bg-card text-foreground hover:bg-muted" iconClassName="size-[18px]" />
           </div>
         </header>
 
         <div className="mx-auto w-full max-w-[1180px] flex-1 px-4 py-6 md:px-8 md:py-8">{children}</div>
+        <GlobalAudioPlayer />
 
         <nav aria-label="التنقل المحمول" className="mobile-nav md:hidden">
           {navigation.slice(0, 4).map((item) => {
@@ -130,10 +127,22 @@ export function AppShell({ children }: { children: ReactNode }) {
               </a>
             );
           })}
-          <a href="/more" className="mobile-nav-item">
+          <button type="button" onClick={() => setMoreOpen(true)} aria-expanded={moreOpen} className="mobile-nav-item">
             <Ellipsis className="size-5" /><span>المزيد</span>
-          </a>
+          </button>
         </nav>
+        <BottomSheet open={moreOpen} onOpenChange={setMoreOpen} snapPoints={["auto"]} title="المزيد" description="انتقل إلى أقسام ذُو الجَلاَلْ">
+          <nav aria-label="المزيد من الأقسام" className="grid grid-cols-2 gap-2 p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+            {navigation.slice(4).map((item) => (
+              <button key={item.href} type="button" onClick={() => { setMoreOpen(false); router.push(item.href); }} className="more-sheet-item">
+                <item.icon className="size-5" /><span>{item.label}</span>
+              </button>
+            ))}
+            <button type="button" onClick={() => { setMoreOpen(false); router.push("/settings"); }} className="more-sheet-item">
+              <Settings2 className="size-5" /><span>الإعدادات</span>
+            </button>
+          </nav>
+        </BottomSheet>
       </AnimatedSidebarInset>
     </AnimatedSidebarProvider>
   );

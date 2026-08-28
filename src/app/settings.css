@@ -1,0 +1,21 @@
+.settings-tabs { max-width: 100%; overflow-x: auto; justify-content: flex-start; }
+.settings-section { margin-block-start: 1rem; border: 1px solid var(--border); border-radius: 1.35rem; background: var(--card); padding: 1rem; }
+.setting-header { display: flex; align-items: flex-start; gap: .85rem; padding-block-end: 1rem; border-block-end: 1px solid var(--border); }
+.setting-header > span { display: grid; width: 2.6rem; height: 2.6rem; flex: none; place-items: center; border-radius: .8rem; background: var(--green-soft); color: var(--primary); }
+.setting-header svg { width: 1rem; }
+.setting-header h2 { font-size: 1.15rem; font-weight: 700; }
+.setting-header p { margin-block-start: .25rem; color: var(--muted-foreground); font-size: .72rem; line-height: 1.7; }
+.setting-row { display: flex; min-height: 4.75rem; align-items: center; justify-content: space-between; gap: 1rem; border-block-end: 1px solid var(--border); }
+.setting-row > span { font-size: .85rem; font-weight: 570; }
+.setting-row > div { width: min(100%, 20rem); }
+.theme-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: .6rem; margin-block-start: 1rem; }
+.theme-grid button { display: flex; min-height: 6.5rem; align-items: center; justify-content: center; flex-direction: column; gap: .6rem; border: 1px solid var(--border); border-radius: 1rem; color: var(--muted-foreground); }
+.theme-grid button[aria-pressed="true"] { border-color: color-mix(in srgb, var(--primary) 60%, var(--border)); background: var(--green-soft); color: var(--primary); }
+.theme-grid svg { width: 1.2rem; }
+.danger-actions { display: flex; gap: .6rem; margin-block-start: 1rem; flex-wrap: wrap; }
+.danger-actions button { min-height: 2.75rem; border: 1px solid color-mix(in srgb, var(--destructive) 35%, var(--border)); border-radius: .8rem; padding-inline: .9rem; color: var(--destructive); font-size: .75rem; }
+.privacy-note { display: flex; align-items: flex-start; gap: .65rem; margin-block-start: 1rem; color: var(--muted-foreground); font-size: .72rem; line-height: 1.8; }
+.privacy-note svg { width: 1rem; flex: none; margin-block-start: .25rem; color: var(--primary); }
+@media (min-width:760px) { .settings-section { padding: 1.5rem; } }
+@media (max-width:520px) { .theme-grid { grid-template-columns: 1fr; } .theme-grid button { min-height: 3.5rem; flex-direction: row; } .setting-row { align-items: stretch; flex-direction: column; padding-block: 1rem; } .setting-row > div { width: 100%; } }
+

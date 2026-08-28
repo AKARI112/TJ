@@ -1,0 +1,23 @@
+.dhikr-image-action { display:flex; justify-content:center; margin-block-start:.65rem; }
+.share-composer { padding: 1rem; padding-block-end: max(1.5rem,env(safe-area-inset-bottom)); }
+.share-options { display: grid; gap: .75rem; }
+.share-options fieldset { display: flex; align-items: center; gap: .35rem; flex-wrap: wrap; }
+.share-options legend { width: 100%; margin-block-end: .25rem; color: var(--muted-foreground); font-size: .68rem; }
+.share-options button { min-height: 2.25rem; border: 1px solid var(--border); border-radius: .7rem; padding-inline: .7rem; color: var(--muted-foreground); font-size: .7rem; }
+.share-options button[aria-pressed="true"] { border-color: color-mix(in srgb,var(--primary) 55%,var(--border)); background: var(--green-soft); color: var(--primary); }
+.share-preview-frame { display: grid; max-height: 50dvh; place-items: center; overflow: auto; margin-block: 1rem; border-radius: 1rem; background: var(--surface-soft); padding: 1rem; }
+.share-preview { display: flex; width: min(100%,23rem); flex-direction: column; justify-content: space-between; overflow: hidden; padding: clamp(1.2rem,6vw,2.2rem); color: #f2f3f5; font-family: var(--font-fustat),sans-serif; box-shadow: 0 18px 55px rgb(0 0 0/.22); }
+.share-1-1 { aspect-ratio: 1; } .share-4-5 { aspect-ratio: 4/5; } .share-9-16 { width: min(70%,17rem); aspect-ratio: 9/16; }
+.share-graphite { background: radial-gradient(circle at 15% 15%,rgb(111 155 134/.16),transparent 35%),#101113; }
+.share-light { background: #f5f5f3; color:#202225; }
+.share-minimal { background:#15171a; border:1px solid #2c2f35; }
+.share-preview header { display:flex; align-items:center; justify-content:space-between; font-size:.85rem; font-weight:750; }
+.share-preview header i { width:1.7rem; height:1px; background:#b9a779; }
+.share-preview > div > p { font-size: clamp(1.05rem,4vw,1.55rem); font-weight:520; line-height:2; text-align:center; white-space:pre-line; }
+.share-preview > div > p.share-quran { font-family:"QuranUthmanic","Traditional Arabic",serif; font-size:clamp(1.35rem,5vw,1.9rem); letter-spacing:0; }
+.share-preview small { display:block; margin-block-start:1rem; color:#a7abb3; font-size:.58rem; line-height:1.7; text-align:center; }
+.share-light small { color:#6f747b; }
+.share-preview footer { color:#767b85; font-size:.52rem; text-align:center; }
+.share-actions { display:flex; align-items:center; justify-content:center; gap:.5rem; flex-wrap:wrap; }
+@media (min-width:760px){ .share-options{grid-template-columns:1fr 1fr;} }
+
