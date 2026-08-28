@@ -1,4 +1,4 @@
-export type DevotionalCategorySlug = "morning-dhikr" | "evening-dhikr" | "dhikr-after-salah" | "daily-dua" | "selected-dua";
+export type DevotionalCategorySlug = string;
 
 export interface DevotionalItem {
   id: string;
@@ -13,8 +13,9 @@ export interface DevotionalItem {
   benefit?: string;
   source: string;
   repeatCount: number;
+  repeatCountSourced?: boolean;
   isQuran: boolean;
-  provider: "Fitrahive Dua-Dhikr";
+  provider: string;
   sourceUrl: string;
 }
 

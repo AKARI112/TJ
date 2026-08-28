@@ -4,6 +4,7 @@ import { AppShell } from "@/components/app/app-shell";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ServiceWorkerRegister } from "@/components/pwa/service-worker-register";
 import "./globals.css";
+import "./library.css";
 
 const fustat = Fustat({
   variable: "--font-fustat",

@@ -12,8 +12,8 @@ export default async function QuranPage() {
       <main>
         <header className="page-intro"><p className="eyebrow text-primary">القرآن الكريم</p><h1>المصحف والقراءة، في موضع واحد</h1><p>اختر تجربة القراءة المناسبة. يحفظ ذُو الجَلاَلْ موضعك على جهازك ويعيدك إلى الآية أو الصفحة نفسها.</p></header>
         <nav className="quran-mode-links" aria-label="أوضاع قراءة القرآن">
-          <a href="/quran/page/1"><BookOpenText /><span><strong>المصحف</strong><small>QCF V2 · ٦٠٤ صفحات</small></span></a>
-          <a href="/quran/page/1?mode=tajweed"><Palette /><span><strong>التجويد</strong><small>QCF Tajweed V4</small></span></a>
+          <a href="/quran/page/1"><BookOpenText /><span><strong>المصحف</strong><small>Islamic App SVG · ٦٠٤ صفحات</small></span></a>
+          <a href="/quran/page/1?mode=tajweed"><Palette /><span><strong>التجويد</strong><small>نص عثماني ملوّن موثّق</small></span></a>
           <a href="#surahs"><Rows3 /><span><strong>القراءة</strong><small>نص متجاوب حسب السورة</small></span></a>
         </nav>
         <div id="surahs" className="section-heading mb-4 mt-8"><div><p className="eyebrow text-muted-foreground">الفهرس</p><h2>السور</h2></div></div>

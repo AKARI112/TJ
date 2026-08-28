@@ -1,7 +1,7 @@
-const VERSION = "dhu-al-jalal-v3";
+const VERSION = "dhu-al-jalal-v4";
 const SHELL_CACHE = `${VERSION}-shell`;
 const CONTENT_CACHE = `${VERSION}-content`;
-const SHELL = ["/", "/offline", "/quran", "/adhkar", "/dua", "/hisn", "/manifest.webmanifest", "/icon.svg"];
+const SHELL = ["/", "/offline", "/quran", "/adhkar", "/dua", "/hisn", "/library", "/manifest.webmanifest", "/icon.svg"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(SHELL_CACHE).then((cache) => cache.addAll(SHELL)));

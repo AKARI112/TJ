@@ -1,3 +1,12 @@
 import { NextResponse } from "next/server";
-import { getQuranFoundationResources, isQuranFoundationConfigured } from "@/lib/islamic/providers/quran/quran-foundation";
-export async function GET() { if (!isQuranFoundationConfigured()) return NextResponse.json({ error: "Quran Foundation غير مهيأ" }, { status: 503 }); try { return NextResponse.json(await getQuranFoundationResources(), { headers: { "Cache-Control": "public, s-maxage=86400, stale-while-revalidate=604800" } }); } catch { return NextResponse.json({ error: "تعذر تحميل موارد التفسير والترجمة" }, { status: 502 }); } }
+import { getIslamicAppResources } from "@/lib/islamic/providers/quran/islamic-app";
+export async function GET() {
+  try {
+    return NextResponse.json(await getIslamicAppResources(), { headers: { "Cache-Control": "public, s-maxage=86400, stale-while-revalidate=604800" } });
+  } catch (error) {
+    return NextResponse.json({
+      error: "تعذر تحميل موارد Islamic App",
+      ...(process.env.NODE_ENV === "development" && { detail: error instanceof Error ? error.message : "Unknown error" }),
+    }, { status: 502 });
+  }
+}

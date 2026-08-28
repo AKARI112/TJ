@@ -1,7 +1,7 @@
 "use client";
 
 import {
-  Bell, Bookmark, BookOpenText, CalendarDays, Compass, Ellipsis,
+  Bell, Bookmark, BookCopy, BookOpenText, CalendarDays, Compass, Ellipsis,
   Headphones, HeartHandshake, Home, Menu, MoonStar, Settings2, Sparkles,
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
@@ -28,6 +28,7 @@ const navigation = [
   { href: "/dua", label: "الأدعية", icon: HeartHandshake, group: "الذِكر" },
   { href: "/hisn", label: "حصن المسلم", icon: Bookmark, group: "الذِكر" },
   { href: "/hadith", label: "الحديث", icon: MoonStar, group: "العلم" },
+  { href: "/library", label: "المكتبة", icon: BookCopy, group: "العلم" },
   { href: "/saved", label: "المحفوظات", icon: Bookmark, group: "شخصي" },
   { href: "/reminders", label: "التذكيرات", icon: Bell, group: "شخصي" },
 ] as const;

@@ -14,6 +14,7 @@ export function DhikrSession({ category }: { category: DevotionalCategory }) {
   const [saved, setSaved] = useState(false);
   const [feedback, setFeedback] = useState("");
   const item = category.items[index];
+  const targetCount = item.repeatCount;
 
   useEffect(() => {
     void adhkarSessionRepository.get(category.slug).then((session) => {
@@ -32,11 +33,11 @@ export function DhikrSession({ category }: { category: DevotionalCategory }) {
 
   function select(nextIndex: number) { const safe = Math.max(0, Math.min(category.items.length - 1, nextIndex)); setIndex(safe); setCount(0); setFeedback(""); void persist(safe, 0, completed); }
   function increment() {
-    if (count >= item.repeatCount) return;
+    if (count >= targetCount) return;
     const nextCount = count + 1;
-    const nextCompleted = nextCount >= item.repeatCount && !completed.includes(item.id) ? [...completed, item.id] : completed;
+    const nextCompleted = nextCount >= targetCount && !completed.includes(item.id) ? [...completed, item.id] : completed;
     setCount(nextCount); setCompleted(nextCompleted);
-    if (nextCount >= item.repeatCount && navigator.vibrate) navigator.vibrate(24);
+    if (nextCount >= targetCount && navigator.vibrate) navigator.vibrate(24);
     void persist(index, nextCount, nextCompleted);
   }
   async function toggleSave() {
@@ -50,10 +51,10 @@ export function DhikrSession({ category }: { category: DevotionalCategory }) {
     <div className="dhikr-progress" aria-label={`أنجزت ${completed.length} من ${category.items.length}`}><span style={{ inlineSize: `${progress}%` }} /><small>{completed.length} / {category.items.length}</small></div>
     <header className="dhikr-meta"><div><p className="eyebrow">{category.label}</p><h2 id="dhikr-current-title">الذكر {item.position} من {category.items.length}</h2></div><span className="source-chip">{item.source}</span></header>
     <p className={`dhikr-arabic ${item.isQuran ? "quran-devotional" : ""}`} lang="ar" dir="rtl" translate={item.isQuran ? "no" : undefined}>{item.arabic}</p>
-    <div className="dhikr-counter-wrap"><button type="button" className={`dhikr-counter ${count >= item.repeatCount ? "is-complete" : ""}`} onClick={increment} aria-label={`العدّاد: ${count} من ${item.repeatCount}`}><strong>{count}</strong><span>من {item.repeatCount}</span>{count >= item.repeatCount && <Check aria-hidden="true" />}</button><Button variant="ghost" size="icon" onClick={() => { const nextCompleted = completed.filter((id) => id !== item.id); setCount(0); setCompleted(nextCompleted); void persist(index, 0, nextCompleted); }} aria-label="تصفير عداد الذكر"><RotateCcw /></Button></div>
+    <div className="dhikr-counter-wrap"><button type="button" className={`dhikr-counter ${count >= targetCount ? "is-complete" : ""}`} onClick={increment} aria-label={item.repeatCountSourced ? `العدّاد: ${count} من ${targetCount}` : `متابعة قراءة الذكر: ${count}`}><strong>{count}</strong><span>{item.repeatCountSourced ? `من ${targetCount}` : "قراءة للمتابعة"}</span>{count >= targetCount && <Check aria-hidden="true" />}</button><Button variant="ghost" size="icon" onClick={() => { const nextCompleted = completed.filter((id) => id !== item.id); setCount(0); setCompleted(nextCompleted); void persist(index, 0, nextCompleted); }} aria-label="تصفير عداد الذكر"><RotateCcw /></Button></div>
     <div className="dhikr-actions"><Button variant="outline" onClick={() => void toggleSave()}><Bookmark className={saved ? "fill-current" : ""} />{saved ? "محفوظ" : "حفظ"}</Button><Button variant="outline" onClick={() => void navigator.clipboard.writeText(item.arabic).then(() => setFeedback("تم النسخ"))}><Copy />نسخ</Button><Button variant="outline" onClick={() => void share()}><Share2 />مشاركة</Button></div>
     <div className="dhikr-image-action"><ShareComposer text={item.arabic} reference={item.source} title={`${category.label} · ${item.position}`} quran={item.isQuran} compact={false} /></div>
     <nav className="dhikr-nav" aria-label="التنقل بين الأذكار"><Button variant="ghost" disabled={index === 0} onClick={() => select(index - 1)}><ChevronRight />السابق</Button><div className="dhikr-dots" aria-hidden="true">{category.items.map((entry, entryIndex) => <span key={entry.id} className={entryIndex === index ? "is-current" : completed.includes(entry.id) ? "is-done" : ""} />)}</div><Button variant="ghost" disabled={index === category.items.length - 1} onClick={() => select(index + 1)}>التالي<ChevronLeft /></Button></nav>
-    <p className="sr-status" aria-live="polite">{feedback}</p><footer className="content-attribution"><span>المصدر: {item.source}</span><a href={item.sourceUrl} target="_blank" rel="noreferrer">عرض مجموعة البيانات</a></footer>
+    <p className="sr-status" aria-live="polite">{feedback}</p><footer className="content-attribution"><span>المصدر: {item.source} · {item.provider}</span><a href={item.sourceUrl} target="_blank" rel="noreferrer">عرض مجموعة البيانات</a></footer>
   </section>;
 }

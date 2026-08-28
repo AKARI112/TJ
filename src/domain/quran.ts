@@ -14,34 +14,31 @@ export interface ProviderResult<T> { data: T; provider: string; sourceUrl?: stri
 
 export type MushafMode = "mushaf" | "tajweed";
 
-export interface MushafWord {
-  id: string;
+export interface TajweedPageVerse {
+  id: number;
   verseKey: string;
-  position: number;
-  pageNumber: number;
-  lineNumber: number;
-  charType: "word" | "end" | "pause" | "sajdah" | "rub-el-hizb";
-  glyphCode?: string;
-  textFallback?: string;
+  verseNumber: number;
+  textUthmani: string;
+  tajweedMarkup: string;
 }
-
-export interface MushafLine { lineNumber: number; words: MushafWord[]; }
 
 export interface MushafPage {
   pageNumber: number;
-  mushafId: 1 | 19;
+  mushafId: 1;
   mode: MushafMode;
-  lines: MushafLine[];
-  fontUrl: string;
-  fallbackFontUrl: string;
-  provider: "Quran Foundation";
+  imageUrl?: string;
+  verses?: TajweedPageVerse[];
+  firstVerseKey?: string;
+  provider: "Islamic App";
   sourceUrl: string;
 }
 
 export interface QuranResourceOption {
   id: number;
+  slug: string;
   name: string;
   languageName?: string;
   authorName?: string;
 }
-export interface QuranVerseStudy { verseKey: string; tafsir?: { resourceId: number; resourceName?: string; languageName?: string; text: string }; translation?: { resourceId: number; resourceName?: string; languageName?: string; text: string }; provider: "Quran Foundation"; sourceUrl: string; }
+export interface QuranWordStudy { position: number; textUthmani: string; translation?: string; transliteration?: string; audioUrl?: string; }
+export interface QuranVerseStudy { verseKey: string; tafsir?: { resourceId: number; resourceName?: string; languageName?: string; text: string }; translation?: { resourceId: number; resourceName?: string; languageName?: string; text: string }; words?: QuranWordStudy[]; provider: "Islamic App"; sourceUrl: string; }

@@ -8,6 +8,11 @@
 .study-sheet > section h3 { font-size: 1rem; font-weight: 700; }
 .study-sheet > section header p { color: var(--muted-foreground); font-size: .68rem; }
 .study-sheet > section > p { margin-block-start: .8rem; font-size: 1rem; line-height: 2; white-space: pre-line; }
+.word-study-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(7rem,1fr)); gap: .5rem; margin-block-start: 1rem; }
+.word-study-grid>div { display: grid; gap: .2rem; border: 1px solid var(--border); border-radius: .75rem; padding: .7rem; text-align: center; }
+.word-study-grid strong { font-family: "QuranUthmanic",serif; font-size: 1.25rem; font-weight: 400; }
+.word-study-grid span,.word-study-grid small { color: var(--muted-foreground); font-size: .67rem; }
+.word-study-grid audio { inline-size: 100%; block-size: 1.8rem; margin-block-start: .25rem; }
 .reciter-profile-head { display: flex; align-items: center; gap: 1rem; border-block-end: 1px solid var(--border); padding-block-end: 1.25rem; }
 .reciter-profile-head .reciter-avatar { width: 4rem; height: 4rem; font-size: 1.3rem; }
 .reciter-profile-head h1 { font-size: clamp(1.5rem,4vw,2.4rem); font-weight: 750; }
@@ -26,4 +31,3 @@
 .surah-audio-list button svg { width: .95rem; }
 @media (min-width:760px) { .study-selectors { grid-template-columns: 1fr 1fr; } }
 @media (max-width:520px) { .reciter-profile-head { align-items: flex-start; flex-wrap: wrap; } .reciter-profile-head > button { width: 100%; margin-inline-start: 0; justify-content: center; } .reciter-moshaf { align-items: stretch; flex-direction: column; } .reciter-moshaf > div { width: 100%; } }
-
