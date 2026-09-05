@@ -1,0 +1,321 @@
+.readerShell {
+  width: 100%;
+  max-width: 61rem;
+  margin-inline: auto;
+}
+
+.readerTopbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.viewSwitcher {
+  display: inline-flex;
+  align-items: center;
+  gap: .25rem;
+  padding: .28rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--card);
+}
+
+.viewLink {
+  display: inline-flex;
+  min-height: 2.35rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding-inline: .85rem;
+  color: var(--muted-foreground);
+  font-size: .76rem;
+  font-weight: 650;
+  white-space: nowrap;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+.viewLink:hover {
+  color: var(--foreground);
+}
+
+.viewLinkActive {
+  background: color-mix(in srgb, var(--primary) 12%, var(--card));
+  color: var(--primary);
+}
+
+.mushafHeader {
+  position: relative;
+  isolation: isolate;
+  min-height: 8.6rem;
+  overflow: hidden;
+  border: 1px solid #8ca890;
+  border-radius: 1rem;
+  background: #fffef7;
+  color: #18231b;
+  box-shadow: 0 16px 44px rgb(35 50 39 / .08);
+}
+
+.mushafHeader::before,
+.mushafHeader::after {
+  position: absolute;
+  z-index: -1;
+  inset-block: .55rem;
+  width: min(28%, 12rem);
+  border: 1px solid rgb(48 107 68 / .36);
+  content: "";
+  opacity: .96;
+  background:
+    radial-gradient(circle at 50% 50%, rgb(48 107 68 / .24) 0 9%, transparent 10% 100%),
+    linear-gradient(45deg, transparent 43%, rgb(48 107 68 / .2) 44% 48%, transparent 49% 100%) 0 0 / 1.3rem 1.3rem,
+    linear-gradient(-45deg, transparent 43%, rgb(48 107 68 / .2) 44% 48%, transparent 49% 100%) 0 0 / 1.3rem 1.3rem;
+}
+
+.mushafHeader::before {
+  inset-inline-start: .55rem;
+  border-start-start-radius: .65rem;
+  border-end-start-radius: .65rem;
+}
+
+.mushafHeader::after {
+  inset-inline-end: .55rem;
+  border-start-end-radius: .65rem;
+  border-end-end-radius: .65rem;
+}
+
+.headerInner {
+  display: flex;
+  min-height: 8.6rem;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 1.35rem min(30%, 12.5rem);
+  text-align: center;
+}
+
+.surahLabel {
+  color: #45664f;
+  font-size: .72rem;
+  font-weight: 650;
+}
+
+.surahName {
+  margin-top: .15rem;
+  font-family: "QuranUthmanic", "Traditional Arabic", serif;
+  font-size: clamp(2.15rem, 6vw, 3.3rem);
+  font-weight: 400;
+  line-height: 1.35;
+}
+
+.surahMeta {
+  margin-top: .15rem;
+  color: #657268;
+  font-size: .72rem;
+}
+
+.mushafPages {
+  display: grid;
+  gap: 1.2rem;
+  margin-top: 1rem;
+}
+
+.mushafPage {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(2.25rem, 5vw, 3.4rem) clamp(1.35rem, 5vw, 3.2rem) 1.25rem;
+  border: 1px solid #a3b6a4;
+  border-radius: .7rem;
+  background: #fffef7;
+  color: #111511;
+  box-shadow: 0 17px 48px rgb(42 50 43 / .08);
+}
+
+.mushafPage::before {
+  position: absolute;
+  inset: .58rem;
+  border: 1px solid rgb(59 111 74 / .2);
+  border-radius: .35rem;
+  content: "";
+  pointer-events: none;
+}
+
+.mushafPage::after {
+  position: absolute;
+  inset-inline: 1.1rem;
+  inset-block-start: .78rem;
+  height: .3rem;
+  border-block: 1px solid rgb(59 111 74 / .28);
+  content: "";
+  pointer-events: none;
+  background: repeating-linear-gradient(90deg, transparent 0 .72rem, rgb(59 111 74 / .2) .72rem .8rem, transparent .8rem 1.52rem);
+}
+
+.pageText {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  font-family: "QuranUthmanic", "Traditional Arabic", serif;
+  font-size: clamp(1.82rem, 3.8vw, 2.35rem);
+  font-weight: 400;
+  line-height: 2.18;
+  letter-spacing: 0;
+  text-align: justify;
+  text-align-last: center;
+  text-rendering: optimizeLegibility;
+}
+
+.verse {
+  scroll-margin-top: 6rem;
+}
+
+.ayahMark {
+  display: inline-grid;
+  width: 2.1rem;
+  height: 2.1rem;
+  place-items: center;
+  margin-inline: .12rem .2rem;
+  border: 1px solid #337248;
+  border-radius: 50%;
+  background: rgb(52 113 73 / .035);
+  color: #28643d;
+  box-shadow: inset 0 0 0 2px #fffef7, 0 0 0 1px rgb(51 114 72 / .16);
+  font-family: var(--font-fustat), sans-serif;
+  font-size: .69rem;
+  font-weight: 650;
+  line-height: 1;
+  vertical-align: .28em;
+}
+
+.pageFooter {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .55rem;
+  margin-top: 1.05rem;
+  padding-top: .75rem;
+  border-top: 1px solid rgb(59 111 74 / .12);
+  color: #69756c;
+  font-size: .68rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.pageFooterDot {
+  width: .24rem;
+  height: .24rem;
+  border-radius: 50%;
+  background: #47765a;
+}
+
+:global(.dark) .mushafHeader,
+:global(.dark) .mushafPage {
+  border-color: #526b57;
+  background: #171a16;
+  color: #f1f0e7;
+  box-shadow: 0 18px 55px rgb(0 0 0 / .22);
+}
+
+:global(.dark) .mushafHeader::before,
+:global(.dark) .mushafHeader::after {
+  border-color: rgb(127 167 136 / .36);
+  background:
+    radial-gradient(circle at 50% 50%, rgb(127 167 136 / .2) 0 9%, transparent 10% 100%),
+    linear-gradient(45deg, transparent 43%, rgb(127 167 136 / .16) 44% 48%, transparent 49% 100%) 0 0 / 1.3rem 1.3rem,
+    linear-gradient(-45deg, transparent 43%, rgb(127 167 136 / .16) 44% 48%, transparent 49% 100%) 0 0 / 1.3rem 1.3rem;
+}
+
+:global(.dark) .surahLabel,
+:global(.dark) .surahMeta,
+:global(.dark) .pageFooter {
+  color: #a9b8ac;
+}
+
+:global(.dark) .mushafPage::before,
+:global(.dark) .mushafPage::after {
+  border-color: rgb(127 167 136 / .18);
+}
+
+:global(.dark) .ayahMark {
+  border-color: #7da586;
+  background: rgb(125 165 134 / .06);
+  color: #9dc0a4;
+  box-shadow: inset 0 0 0 2px #171a16, 0 0 0 1px rgb(125 165 134 / .18);
+}
+
+:global(.dark) .pageFooterDot {
+  background: #7da586;
+}
+
+@media (max-width: 680px) {
+  .readerTopbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .viewSwitcher {
+    align-self: flex-start;
+  }
+
+  .mushafHeader {
+    min-height: 7.25rem;
+  }
+
+  .mushafHeader::before,
+  .mushafHeader::after {
+    width: 24%;
+  }
+
+  .headerInner {
+    min-height: 7.25rem;
+    padding-inline: 24%;
+  }
+
+  .surahName {
+    font-size: clamp(1.9rem, 10vw, 2.55rem);
+  }
+
+  .mushafPage {
+    padding: 2.3rem 1.15rem 1rem;
+    border-radius: .55rem;
+  }
+
+  .mushafPage::before {
+    inset: .42rem;
+  }
+
+  .mushafPage::after {
+    inset-inline: .8rem;
+    inset-block-start: .58rem;
+  }
+
+  .pageText {
+    font-size: clamp(1.62rem, 7vw, 1.92rem);
+    line-height: 2.15;
+  }
+
+  .ayahMark {
+    width: 1.85rem;
+    height: 1.85rem;
+    font-size: .62rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .viewLink {
+    transition: none;
+  }
+}
+
+@media print {
+  .readerTopbar {
+    display: none;
+  }
+
+  .mushafPage {
+    break-inside: avoid;
+    border-color: #8ca890;
+    box-shadow: none;
+  }
+}
