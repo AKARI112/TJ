@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { BookOpenText, ChevronLeft, Palette, Rows3 } from "lucide-react";
 import { getChapters } from "@/lib/islamic/providers/quran";
 
-export const metadata: Metadata = { title: "القرآن الكريم", description: "اقرأ سور القرآن الكريم بنص عثماني موثّق مع حفظ موضع القراءة." };
+export const metadata: Metadata = { title: "القرآن الكريم", description: "اقرأ المصحف صفحةً كاملة، مع بطاقات منفصلة للمشاركة والحفظ." };
 export const dynamic = "force-dynamic";
 
 export default async function QuranPage() {
@@ -10,12 +10,18 @@ export default async function QuranPage() {
     const result = await getChapters();
     return (
       <main>
-        <header className="page-intro"><p className="eyebrow text-primary">القرآن الكريم</p><h1>المصحف والقراءة، في موضع واحد</h1><p>القراءة بأسلوب صفحات المصحف هي التجربة الأساسية الآن، مع بقاء القراءة التفصيلية والمصحف المصوّر والتجويد كخيارات إضافية.</p></header>
+        <header className="page-intro">
+          <p className="eyebrow text-primary">القرآن الكريم</p>
+          <h1>المصحف أولًا، والبطاقات للمشاركة</h1>
+          <p>القراءة الأساسية تعرض صفحة المصحف كاملة بصورتها التقليدية بدل إعادة تركيب النص داخل بطاقات أو أسطر مصطنعة. بطاقات الآيات بقيت كمساحة منفصلة للحفظ والمشاركة.</p>
+        </header>
+
         <nav className="quran-mode-links" aria-label="أوضاع قراءة القرآن">
-          <a href="#surahs"><Rows3 /><span><strong>القراءة</strong><small>الأسلوب الأساسي · صفحات متجاوبة بنص عثماني متصل</small></span></a>
-          <a href="/quran/page/1"><BookOpenText /><span><strong>المصحف المصوّر</strong><small>Islamic App SVG · ٦٠٤ صفحات</small></span></a>
-          <a href="/quran/page/1?mode=tajweed"><Palette /><span><strong>التجويد</strong><small>نص عثماني ملوّن موثّق</small></span></a>
+          <a href="/quran/page/1"><BookOpenText /><span><strong>المصحف التقليدي</strong><small>الأسلوب الأساسي · ٦٠٤ صفحة SVG كاملة عالية الوضوح</small></span></a>
+          <a href="/quran/page/1?mode=tajweed"><Palette /><span><strong>التجويد</strong><small>عرض نص عثماني ملوّن كخيار إضافي</small></span></a>
+          <a href="#surahs"><Rows3 /><span><strong>السور وبطاقات المشاركة</strong><small>اختر سورة؛ ستفتح في المصحف، ويمكن الانتقال منها إلى بطاقات الآيات للمشاركة</small></span></a>
         </nav>
+
         <div id="surahs" className="section-heading mb-4 mt-8"><div><p className="eyebrow text-muted-foreground">الفهرس</p><h2>السور</h2></div></div>
         <div className="chapter-list">
           {result.data.map((chapter) => (
@@ -26,7 +32,7 @@ export default async function QuranPage() {
             </a>
           ))}
         </div>
-        <p className="source-line">المصدر: <a href={result.sourceUrl} target="_blank" rel="noreferrer">{result.provider}</a></p>
+        <p className="source-line">بيانات السور: <a href={result.sourceUrl} target="_blank" rel="noreferrer">{result.provider}</a></p>
       </main>
     );
   } catch {

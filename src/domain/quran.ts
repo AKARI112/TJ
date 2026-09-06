@@ -29,7 +29,7 @@ export interface MushafPage {
   imageUrl?: string;
   verses?: TajweedPageVerse[];
   firstVerseKey?: string;
-  provider: "Islamic App";
+  provider: string;
   sourceUrl: string;
 }
 

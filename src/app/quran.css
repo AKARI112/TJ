@@ -1,0 +1,266 @@
+.authentic-mushaf-reader {
+  width: 100%;
+  max-width: 62rem;
+  margin-inline: auto;
+}
+
+.authentic-mushaf-reader .mushaf-toolbar {
+  align-items: center;
+  gap: .65rem;
+}
+
+.mushaf-mode-switcher {
+  display: flex;
+  align-items: center;
+  gap: .3rem;
+  flex-wrap: wrap;
+}
+
+.mushaf-mode-switcher a {
+  display: inline-flex;
+  min-height: 2.55rem;
+  align-items: center;
+  justify-content: center;
+  gap: .42rem;
+  border-radius: .75rem;
+  padding-inline: .8rem;
+  color: var(--muted-foreground);
+  font-size: .74rem;
+  font-weight: 650;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+.mushaf-mode-switcher a:hover {
+  background: var(--muted);
+  color: var(--foreground);
+}
+
+.mushaf-mode-switcher a[aria-current="page"] {
+  background: color-mix(in srgb, var(--primary) 12%, var(--card));
+  color: var(--primary);
+}
+
+.mushaf-mode-switcher svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.authentic-mushaf-reader .mushaf-stage {
+  display: grid;
+  place-items: center;
+}
+
+.authentic-mushaf-frame {
+  width: min(100%, 52rem);
+  margin-inline: auto;
+  overflow: hidden;
+  border: 1px solid #d8d0bd;
+  border-radius: .2rem;
+  background: #fff;
+  box-shadow: 0 20px 60px rgb(28 31 27 / .12);
+}
+
+.authentic-mushaf-frame img {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: #fff;
+}
+
+.dark .authentic-mushaf-frame {
+  border-color: #3e423d;
+  background: #fff;
+  box-shadow: 0 24px 70px rgb(0 0 0 / .34);
+}
+
+.mushaf-source-note {
+  max-width: 52rem;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.quran-card-reader {
+  max-width: 58rem;
+}
+
+.quran-card-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.quran-card-topbar .back-link {
+  margin-bottom: 0;
+}
+
+.quran-card-mushaf-link {
+  display: inline-flex;
+  min-height: 2.55rem;
+  align-items: center;
+  gap: .45rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--card);
+  padding-inline: .85rem;
+  color: var(--primary);
+  font-size: .76rem;
+  font-weight: 650;
+}
+
+.quran-card-mushaf-link svg {
+  width: 1rem;
+}
+
+.quran-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: 1.5rem;
+  background: var(--card);
+  padding: 2rem 1.25rem;
+  text-align: center;
+}
+
+.quran-card-header > svg {
+  width: 1.25rem;
+  color: var(--primary);
+}
+
+.quran-card-header p {
+  margin-top: .6rem;
+  color: var(--primary);
+  font-size: .72rem;
+  font-weight: 700;
+}
+
+.quran-card-header h1 {
+  margin-top: .15rem;
+  font-size: clamp(2rem, 6vw, 2.8rem);
+  font-weight: 740;
+}
+
+.quran-card-header span,
+.quran-card-header small {
+  color: var(--muted-foreground);
+}
+
+.quran-card-header span {
+  margin-top: .15rem;
+  font-size: .78rem;
+}
+
+.quran-card-header small {
+  max-width: 36rem;
+  margin-top: .7rem;
+  font-size: .72rem;
+  line-height: 1.8;
+}
+
+.quran-share-cards {
+  display: grid;
+  gap: .9rem;
+  margin-top: 1rem;
+}
+
+.quran-share-card {
+  border: 1px solid var(--border);
+  border-radius: 1.35rem;
+  background: var(--card);
+  padding: 1.35rem;
+  scroll-margin-top: 6rem;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 14rem;
+}
+
+.quran-share-card .quran-text {
+  text-align: right;
+  text-align-last: auto;
+}
+
+.quran-share-card-meta {
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+  margin-top: 1rem;
+  color: var(--muted-foreground);
+  font-size: .7rem;
+}
+
+.quran-share-card-meta .verse-tools {
+  margin-inline-start: auto;
+}
+
+@media (max-width: 760px) {
+  .authentic-mushaf-reader .mushaf-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .mushaf-mode-switcher {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .mushaf-mode-switcher a {
+    min-width: 0;
+    padding-inline: .45rem;
+    font-size: .68rem;
+  }
+
+  .authentic-mushaf-reader .mushaf-jump {
+    width: 100%;
+  }
+
+  .authentic-mushaf-reader .mushaf-jump > div {
+    width: 100%;
+  }
+
+  .authentic-mushaf-frame {
+    width: 100%;
+    border-radius: 0;
+    box-shadow: 0 10px 28px rgb(0 0 0 / .11);
+  }
+
+  .quran-card-topbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .quran-card-mushaf-link {
+    align-self: flex-start;
+  }
+
+  .quran-share-card {
+    padding: 1.05rem;
+  }
+
+  .quran-share-card-meta {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .quran-share-card-meta .verse-tools {
+    width: 100%;
+    margin-inline-start: 0;
+    justify-content: flex-end;
+  }
+}
+
+@media print {
+  .mushaf-toolbar,
+  .mushaf-pagination,
+  .mushaf-source-note,
+  .quran-card-topbar,
+  .quran-card-header .quran-card-mushaf-link {
+    display: none !important;
+  }
+
+  .authentic-mushaf-frame,
+  .quran-share-card {
+    box-shadow: none;
+  }
+}
