@@ -22,11 +22,30 @@ export interface TajweedPageVerse {
   tajweedMarkup: string;
 }
 
+export interface MushafLayoutWord {
+  location: string;
+  word: string;
+  qpcV2: string;
+  qpcV1?: string;
+  isEnd?: boolean;
+}
+
+export interface MushafLayoutLine {
+  line: number;
+  type: string;
+  surah?: number;
+  text?: string;
+  verseRange?: string;
+  words: MushafLayoutWord[];
+}
+
 export interface MushafPage {
   pageNumber: number;
   mushafId: 1;
   mode: MushafMode;
   imageUrl?: string;
+  fontUrl?: string;
+  layout?: MushafLayoutLine[];
   verses?: TajweedPageVerse[];
   firstVerseKey?: string;
   provider: string;
