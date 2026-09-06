@@ -6,13 +6,34 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Input } from "@/components/motion/input";
 import { MushafVerseActions } from "@/components/quran/mushaf-verse-actions";
-import type { MushafLayoutWord, MushafPage, TajweedPageVerse } from "@/domain/quran";
+import type { MushafLayoutLine, MushafLayoutWord, MushafPage, TajweedPageVerse } from "@/domain/quran";
 import { islamicAppMushafUrl } from "@/lib/islamic/quran-utils";
 import { progressRepository } from "@/lib/storage/repositories";
 
 function verseKeyFromLocation(location: string) {
   const [surah, ayah] = location.split(":");
   return surah && ayah ? `${surah}:${ayah}` : "";
+}
+
+function visualGridRow(lines: MushafLayoutLine[], index: number) {
+  const current = lines[index];
+  if (!current) return 1;
+  if (current.type === "text") return Math.max(1, Math.min(15, current.line));
+
+  let groupStart = index;
+  let groupEnd = index;
+  while (groupStart > 0 && lines[groupStart - 1]?.line === current.line) groupStart -= 1;
+  while (groupEnd + 1 < lines.length && lines[groupEnd + 1]?.line === current.line) groupEnd += 1;
+
+  const group = lines.slice(groupStart, groupEnd + 1);
+  const specialEntries = group.filter((entry) => entry.type !== "text");
+  const hasTextOnSameRow = group.some((entry) => entry.type === "text");
+  const specialIndex = group
+    .slice(0, index - groupStart + 1)
+    .filter((entry) => entry.type !== "text").length - 1;
+
+  const firstSpecialRow = current.line - specialEntries.length + (hasTextOnSameRow ? 0 : 1);
+  return Math.max(1, Math.min(15, firstSpecialRow + Math.max(0, specialIndex)));
 }
 
 export function IslamicAppMushafPage({ page }: { page: MushafPage }) {
@@ -63,25 +84,32 @@ export function IslamicAppMushafPage({ page }: { page: MushafPage }) {
   function selectVerseFromWord(word: MushafLayoutWord) {
     const verseKey = verseKeyFromLocation(word.location);
     if (!verseKey) return;
-    const providedVerse = versesByKey.get(verseKey);
-    if (providedVerse) {
-      setSelectedVerse(providedVerse);
-      return;
-    }
 
-    const [surah, ayah] = verseKey.split(":");
-    const fallbackWords = (page.layout ?? [])
+    const layoutWords = (page.layout ?? [])
       .flatMap((line) => line.words)
       .filter((candidate) => verseKeyFromLocation(candidate.location) === verseKey && !candidate.isEnd)
       .map((candidate) => candidate.word);
-    if (!fallbackWords.length) return;
+    const layoutVerseText = layoutWords.join(" ");
+    const providedVerse = versesByKey.get(verseKey);
+
+    if (providedVerse) {
+      const hasSeparateBasmala = page.layout?.some((line) => line.type === "basmala") ?? false;
+      const textUthmani = providedVerse.verseNumber === 1 && hasSeparateBasmala && layoutVerseText
+        ? layoutVerseText
+        : providedVerse.textUthmani;
+      setSelectedVerse({ ...providedVerse, textUthmani, tajweedMarkup: textUthmani });
+      return;
+    }
+
+    if (!layoutVerseText) return;
+    const [surah, ayah] = verseKey.split(":");
     const verseNumber = Number(ayah);
     setSelectedVerse({
       id: Number(`${surah}${ayah}`),
       verseKey,
       verseNumber,
-      textUthmani: fallbackWords.join(" "),
-      tajweedMarkup: fallbackWords.join(" "),
+      textUthmani: layoutVerseText,
+      tajweedMarkup: layoutVerseText,
     });
   }
 
@@ -111,15 +139,14 @@ export function IslamicAppMushafPage({ page }: { page: MushafPage }) {
           <div className={`qcf-mushaf-page ${page.mode === "tajweed" ? "qcf-mushaf-tajweed" : ""}`}>
             <div className="qcf-mushaf-inner notranslate" translate="no">
               {page.layout?.map((line, index, lines) => {
-                const duplicateWithNext = lines[index + 1]?.line === line.line;
-                const gridRow = Math.max(1, Math.min(15, line.type === "surah-header" && duplicateWithNext ? line.line - 1 : line.line));
+                const gridRow = visualGridRow(lines, index);
 
                 if (line.type === "surah-header") {
                   return <div key={`${line.line}-${index}`} className="qcf-mushaf-line qcf-surah-header" style={{ gridRow }}><span>{line.text}</span></div>;
                 }
 
                 if (!line.words.length) {
-                  return <div key={`${line.line}-${index}`} className="qcf-mushaf-line qcf-plain-line" style={{ gridRow }}><span>{line.text}</span></div>;
+                  return <div key={`${line.line}-${index}`} className={`qcf-mushaf-line qcf-plain-line ${line.type === "basmala" ? "qcf-plain-basmala" : ""}`} style={{ gridRow }}><span>{line.text}</span></div>;
                 }
 
                 return (
