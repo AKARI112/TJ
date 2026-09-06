@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { ServiceWorkerRegister } from "@/components/pwa/service-worker-register";
 import "./globals.css";
 import "./quran.css";
+import "./mushaf.css";
 import "./library.css";
 
 const fustat = Fustat({
