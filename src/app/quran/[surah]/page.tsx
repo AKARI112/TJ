@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ArrowRight, BookMarked } from "lucide-react";
+import { AyahRosette, MushafSideOrnament } from "@/components/quran/mushaf-ornaments";
 import { VerseTools } from "@/components/quran/verse-tools";
 import { ReadingProgressTracker } from "@/components/quran/reading-progress-tracker";
 import type { QuranVerse } from "@/domain/quran";
@@ -82,23 +83,26 @@ export default async function SurahPage({ params, searchParams }: SurahRouteProp
         ) : (
           <>
             <header className={styles.mushafHeader}>
-              <div className={styles.headerInner}>
-                <span className={styles.surahLabel}>سُورَة</span>
-                <h1 className={styles.surahName}>{chapter.nameArabic}</h1>
-                <span className={styles.surahMeta}>{chapter.versesCount.toLocaleString("ar-SA")} آية · {chapter.revelationPlace === "makkah" ? "مكية" : "مدنية"}</span>
+              <div className={styles.headerFrame}>
+                <MushafSideOrnament className={styles.headerOrnament} />
+                <div className={styles.headerCartouche}>
+                  <span className={styles.surahLabel}>سُورَة</span>
+                  <h1 className={styles.surahName}>{chapter.nameArabic}</h1>
+                  <span className={styles.surahMeta}>{chapter.versesCount.toLocaleString("ar-SA")} آية · {chapter.revelationPlace === "makkah" ? "مكية" : "مدنية"}</span>
+                </div>
+                <MushafSideOrnament className={styles.headerOrnament} mirrored />
               </div>
             </header>
 
             <div className={`${styles.mushafPages} notranslate`} translate="no">
               {pages.map(([pageNumber, verses]) => (
                 <section key={pageNumber} className={styles.mushafPage} aria-label={`صفحة ${pageNumber.toLocaleString("ar-SA")}`}>
+                  <div className={styles.pageBorder} aria-hidden="true" />
                   <p className={styles.pageText}>
                     {verses.map((verse) => (
                       <span key={verse.id} id={`ayah-${verse.verseNumber}`} data-verse={verse.verseNumber} className={styles.verse}>
                         {verse.textUthmani}{" "}
-                        <span className={styles.ayahMark} aria-label={`الآية ${verse.verseNumber.toLocaleString("ar-SA")}`}>
-                          {verse.verseNumber.toLocaleString("ar-SA")}
-                        </span>{" "}
+                        <AyahRosette number={verse.verseNumber} className={styles.ayahMark} />{" "}
                       </span>
                     ))}
                   </p>

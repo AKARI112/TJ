@@ -1,6 +1,6 @@
 .readerShell {
   width: 100%;
-  max-width: 61rem;
+  max-width: 64rem;
   margin-inline: auto;
 }
 
@@ -15,11 +15,12 @@
 .viewSwitcher {
   display: inline-flex;
   align-items: center;
-  gap: .25rem;
-  padding: .28rem;
+  gap: .2rem;
+  padding: .25rem;
   border: 1px solid var(--border);
   border-radius: 999px;
-  background: var(--card);
+  background: color-mix(in srgb, var(--card) 96%, transparent);
+  box-shadow: 0 7px 22px rgb(24 33 27 / .05);
 }
 
 .viewLink {
@@ -28,16 +29,17 @@
   align-items: center;
   justify-content: center;
   border-radius: 999px;
-  padding-inline: .85rem;
+  padding-inline: .9rem;
   color: var(--muted-foreground);
   font-size: .76rem;
   font-weight: 650;
   white-space: nowrap;
-  transition: background-color 160ms ease, color 160ms ease;
+  transition: background-color 160ms ease, color 160ms ease, transform 160ms ease;
 }
 
 .viewLink:hover {
   color: var(--foreground);
+  transform: translateY(-1px);
 }
 
 .viewLinkActive {
@@ -46,120 +48,172 @@
 }
 
 .mushafHeader {
-  position: relative;
-  isolation: isolate;
-  min-height: 8.6rem;
-  overflow: hidden;
-  border: 1px solid #8ca890;
-  border-radius: 1rem;
-  background: #fffef7;
-  color: #18231b;
-  box-shadow: 0 16px 44px rgb(35 50 39 / .08);
+  margin-inline: auto;
+  max-width: 58rem;
+  border: 1px solid #75957c;
+  background: #fffef8;
+  color: #1c2a20;
+  box-shadow: 0 16px 44px rgb(35 50 39 / .07);
 }
 
-.mushafHeader::before,
-.mushafHeader::after {
-  position: absolute;
-  z-index: -1;
-  inset-block: .55rem;
-  width: min(28%, 12rem);
-  border: 1px solid rgb(48 107 68 / .36);
-  content: "";
-  opacity: .96;
+.headerFrame {
+  display: grid;
+  min-height: 7.4rem;
+  grid-template-columns: minmax(0, 1fr) minmax(13rem, 20rem) minmax(0, 1fr);
+  align-items: stretch;
+  gap: .6rem;
+  margin: .38rem;
+  border: 1px solid rgb(50 109 70 / .28);
   background:
-    radial-gradient(circle at 50% 50%, rgb(48 107 68 / .24) 0 9%, transparent 10% 100%),
-    linear-gradient(45deg, transparent 43%, rgb(48 107 68 / .2) 44% 48%, transparent 49% 100%) 0 0 / 1.3rem 1.3rem,
-    linear-gradient(-45deg, transparent 43%, rgb(48 107 68 / .2) 44% 48%, transparent 49% 100%) 0 0 / 1.3rem 1.3rem;
+    linear-gradient(90deg, rgb(59 122 79 / .025), transparent 18% 82%, rgb(59 122 79 / .025)),
+    #fffef8;
 }
 
-.mushafHeader::before {
-  inset-inline-start: .55rem;
-  border-start-start-radius: .65rem;
-  border-end-start-radius: .65rem;
+.headerOrnament {
+  width: 100%;
+  height: 100%;
+  min-height: 6.6rem;
+  color: #2f7047;
+  opacity: .92;
 }
 
-.mushafHeader::after {
-  inset-inline-end: .55rem;
-  border-start-end-radius: .65rem;
-  border-end-end-radius: .65rem;
-}
-
-.headerInner {
+.headerCartouche {
+  position: relative;
   display: flex;
-  min-height: 8.6rem;
+  min-height: 6.6rem;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  padding: 1.35rem min(30%, 12.5rem);
+  margin-block: .35rem;
+  padding: .75rem 1.3rem;
+  border: 1px solid #799b80;
+  border-radius: 1.1rem .45rem 1.1rem .45rem;
+  background: #fffefa;
   text-align: center;
+  box-shadow: inset 0 0 0 3px #fffefa, inset 0 0 0 4px rgb(70 121 82 / .13);
+}
+
+.headerCartouche::before,
+.headerCartouche::after {
+  position: absolute;
+  inset-block: 50%;
+  width: .52rem;
+  height: .52rem;
+  border: 1px solid #799b80;
+  background: #fffefa;
+  content: "";
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.headerCartouche::before {
+  inset-inline-start: -.3rem;
+}
+
+.headerCartouche::after {
+  inset-inline-end: -.3rem;
 }
 
 .surahLabel {
-  color: #45664f;
-  font-size: .72rem;
-  font-weight: 650;
+  color: #386c48;
+  font-size: .64rem;
+  font-weight: 700;
+  letter-spacing: .045em;
 }
 
 .surahName {
-  margin-top: .15rem;
+  margin-top: .05rem;
   font-family: "QuranUthmanic", "Traditional Arabic", serif;
-  font-size: clamp(2.15rem, 6vw, 3.3rem);
+  font-size: clamp(2.15rem, 5vw, 3.05rem);
   font-weight: 400;
-  line-height: 1.35;
+  line-height: 1.25;
 }
 
 .surahMeta {
-  margin-top: .15rem;
-  color: #657268;
-  font-size: .72rem;
+  margin-top: .12rem;
+  color: #66756a;
+  font-size: .66rem;
 }
 
 .mushafPages {
   display: grid;
-  gap: 1.2rem;
-  margin-top: 1rem;
+  gap: 1.35rem;
+  max-width: 58rem;
+  margin: 1rem auto 0;
 }
 
 .mushafPage {
   position: relative;
+  isolation: isolate;
   overflow: hidden;
-  padding: clamp(2.25rem, 5vw, 3.4rem) clamp(1.35rem, 5vw, 3.2rem) 1.25rem;
-  border: 1px solid #a3b6a4;
-  border-radius: .7rem;
-  background: #fffef7;
-  color: #111511;
-  box-shadow: 0 17px 48px rgb(42 50 43 / .08);
+  padding: clamp(2.8rem, 5vw, 4rem) clamp(1.4rem, 5.5vw, 3.75rem) 1.15rem;
+  border: 1px solid #829d86;
+  border-radius: .3rem;
+  background:
+    radial-gradient(circle at 50% -10%, rgb(104 138 109 / .04), transparent 36%),
+    linear-gradient(180deg, #fffef9 0%, #fbfaf2 100%);
+  color: #101610;
+  box-shadow: 0 17px 52px rgb(42 50 43 / .075);
+}
+
+.pageBorder {
+  position: absolute;
+  z-index: -1;
+  inset: .55rem;
+  border: 1px solid rgb(55 111 72 / .28);
+  pointer-events: none;
+}
+
+.pageBorder::before,
+.pageBorder::after {
+  position: absolute;
+  inset-inline: .28rem;
+  height: .4rem;
+  border-block: 1px solid rgb(55 111 72 / .22);
+  content: "";
+  background:
+    radial-gradient(circle, rgb(55 111 72 / .3) 0 1px, transparent 1.5px) 0 50% / .8rem .4rem repeat-x;
+}
+
+.pageBorder::before {
+  inset-block-start: .3rem;
+}
+
+.pageBorder::after {
+  inset-block-end: .3rem;
+}
+
+.mushafPage::before,
+.mushafPage::after {
+  position: absolute;
+  z-index: -1;
+  width: 1rem;
+  height: 1rem;
+  border: 1px solid rgb(55 111 72 / .31);
+  content: "";
+  transform: rotate(45deg);
 }
 
 .mushafPage::before {
-  position: absolute;
-  inset: .58rem;
-  border: 1px solid rgb(59 111 74 / .2);
-  border-radius: .35rem;
-  content: "";
-  pointer-events: none;
+  inset-block-start: .32rem;
+  inset-inline-start: .32rem;
 }
 
 .mushafPage::after {
-  position: absolute;
-  inset-inline: 1.1rem;
-  inset-block-start: .78rem;
-  height: .3rem;
-  border-block: 1px solid rgb(59 111 74 / .28);
-  content: "";
-  pointer-events: none;
-  background: repeating-linear-gradient(90deg, transparent 0 .72rem, rgb(59 111 74 / .2) .72rem .8rem, transparent .8rem 1.52rem);
+  inset-block-end: .32rem;
+  inset-inline-end: .32rem;
 }
 
 .pageText {
   position: relative;
   z-index: 1;
   margin: 0;
+  direction: rtl;
   font-family: "QuranUthmanic", "Traditional Arabic", serif;
-  font-size: clamp(1.82rem, 3.8vw, 2.35rem);
+  font-size: clamp(1.88rem, 3.8vw, 2.42rem);
   font-weight: 400;
-  line-height: 2.18;
+  line-height: 2.2;
   letter-spacing: 0;
+  word-spacing: .018em;
   text-align: justify;
   text-align-last: center;
   text-rendering: optimizeLegibility;
@@ -170,21 +224,36 @@
 }
 
 .ayahMark {
+  position: relative;
   display: inline-grid;
-  width: 2.1rem;
-  height: 2.1rem;
+  width: 2.18rem;
+  height: 2.18rem;
   place-items: center;
-  margin-inline: .12rem .2rem;
-  border: 1px solid #337248;
-  border-radius: 50%;
-  background: rgb(52 113 73 / .035);
-  color: #28643d;
-  box-shadow: inset 0 0 0 2px #fffef7, 0 0 0 1px rgb(51 114 72 / .16);
+  margin-inline: .08rem .18rem;
+  color: #2d7146;
   font-family: var(--font-fustat), sans-serif;
-  font-size: .69rem;
-  font-weight: 650;
+  font-size: .61rem;
+  font-weight: 700;
   line-height: 1;
-  vertical-align: .28em;
+  vertical-align: .29em;
+}
+
+.ayahMark svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.ayahMark > span {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 1.24rem;
+  height: 1.24rem;
+  place-items: center;
+  border-radius: 50%;
+  background: #fffef9;
 }
 
 .pageFooter {
@@ -194,36 +263,52 @@
   align-items: center;
   justify-content: center;
   gap: .55rem;
-  margin-top: 1.05rem;
-  padding-top: .75rem;
-  border-top: 1px solid rgb(59 111 74 / .12);
-  color: #69756c;
-  font-size: .68rem;
+  margin-top: 1.1rem;
+  padding-top: .72rem;
+  color: #6a776d;
+  font-size: .66rem;
   font-variant-numeric: tabular-nums;
 }
 
 .pageFooterDot {
-  width: .24rem;
-  height: .24rem;
+  width: .22rem;
+  height: .22rem;
   border-radius: 50%;
   background: #47765a;
 }
 
+:global(.dark) .viewSwitcher {
+  box-shadow: none;
+}
+
 :global(.dark) .mushafHeader,
 :global(.dark) .mushafPage {
-  border-color: #526b57;
+  border-color: #566f5b;
   background: #171a16;
   color: #f1f0e7;
   box-shadow: 0 18px 55px rgb(0 0 0 / .22);
 }
 
-:global(.dark) .mushafHeader::before,
-:global(.dark) .mushafHeader::after {
-  border-color: rgb(127 167 136 / .36);
-  background:
-    radial-gradient(circle at 50% 50%, rgb(127 167 136 / .2) 0 9%, transparent 10% 100%),
-    linear-gradient(45deg, transparent 43%, rgb(127 167 136 / .16) 44% 48%, transparent 49% 100%) 0 0 / 1.3rem 1.3rem,
-    linear-gradient(-45deg, transparent 43%, rgb(127 167 136 / .16) 44% 48%, transparent 49% 100%) 0 0 / 1.3rem 1.3rem;
+:global(.dark) .headerFrame {
+  border-color: rgb(128 168 137 / .28);
+  background: #171a16;
+}
+
+:global(.dark) .headerOrnament,
+:global(.dark) .ayahMark {
+  color: #83ad8c;
+}
+
+:global(.dark) .headerCartouche {
+  border-color: #63806a;
+  background: #1c201b;
+  box-shadow: inset 0 0 0 3px #1c201b, inset 0 0 0 4px rgb(126 164 135 / .13);
+}
+
+:global(.dark) .headerCartouche::before,
+:global(.dark) .headerCartouche::after {
+  border-color: #63806a;
+  background: #1c201b;
 }
 
 :global(.dark) .surahLabel,
@@ -232,23 +317,28 @@
   color: #a9b8ac;
 }
 
+:global(.dark) .pageBorder,
+:global(.dark) .pageBorder::before,
+:global(.dark) .pageBorder::after,
 :global(.dark) .mushafPage::before,
 :global(.dark) .mushafPage::after {
-  border-color: rgb(127 167 136 / .18);
+  border-color: rgb(127 167 136 / .2);
 }
 
-:global(.dark) .ayahMark {
-  border-color: #7da586;
-  background: rgb(125 165 134 / .06);
-  color: #9dc0a4;
-  box-shadow: inset 0 0 0 2px #171a16, 0 0 0 1px rgb(125 165 134 / .18);
+:global(.dark) .pageBorder::before,
+:global(.dark) .pageBorder::after {
+  background: radial-gradient(circle, rgb(127 167 136 / .28) 0 1px, transparent 1.5px) 0 50% / .8rem .4rem repeat-x;
+}
+
+:global(.dark) .ayahMark > span {
+  background: #171a16;
 }
 
 :global(.dark) .pageFooterDot {
   background: #7da586;
 }
 
-@media (max-width: 680px) {
+@media (max-width: 760px) {
   .readerTopbar {
     align-items: stretch;
     flex-direction: column;
@@ -258,47 +348,66 @@
     align-self: flex-start;
   }
 
-  .mushafHeader {
-    min-height: 7.25rem;
+  .headerFrame {
+    min-height: 6.7rem;
+    grid-template-columns: minmax(2.7rem, 1fr) minmax(11rem, 15.5rem) minmax(2.7rem, 1fr);
+    gap: .2rem;
   }
 
-  .mushafHeader::before,
-  .mushafHeader::after {
-    width: 24%;
+  .headerOrnament,
+  .headerCartouche {
+    min-height: 5.95rem;
   }
 
-  .headerInner {
-    min-height: 7.25rem;
-    padding-inline: 24%;
+  .headerCartouche {
+    margin-block: .3rem;
+    padding-inline: .75rem;
   }
 
   .surahName {
-    font-size: clamp(1.9rem, 10vw, 2.55rem);
+    font-size: clamp(1.9rem, 8vw, 2.55rem);
   }
 
   .mushafPage {
-    padding: 2.3rem 1.15rem 1rem;
-    border-radius: .55rem;
+    padding: 2.6rem 1.15rem .95rem;
   }
 
-  .mushafPage::before {
-    inset: .42rem;
-  }
-
-  .mushafPage::after {
-    inset-inline: .8rem;
-    inset-block-start: .58rem;
+  .pageBorder {
+    inset: .4rem;
   }
 
   .pageText {
-    font-size: clamp(1.62rem, 7vw, 1.92rem);
-    line-height: 2.15;
+    font-size: clamp(1.62rem, 6.6vw, 1.98rem);
+    line-height: 2.18;
   }
 
   .ayahMark {
-    width: 1.85rem;
-    height: 1.85rem;
-    font-size: .62rem;
+    width: 1.92rem;
+    height: 1.92rem;
+    font-size: .56rem;
+  }
+
+  .ayahMark > span {
+    width: 1.08rem;
+    height: 1.08rem;
+  }
+}
+
+@media (max-width: 430px) {
+  .headerFrame {
+    grid-template-columns: 2.4rem minmax(0, 1fr) 2.4rem;
+  }
+
+  .headerOrnament {
+    opacity: .72;
+  }
+
+  .mushafPage {
+    padding-inline: .92rem;
+  }
+
+  .pageText {
+    font-size: clamp(1.55rem, 7.15vw, 1.86rem);
   }
 }
 
@@ -313,9 +422,17 @@
     display: none;
   }
 
+  .readerShell,
+  .mushafPages,
+  .mushafHeader {
+    max-width: none;
+  }
+
   .mushafPage {
     break-inside: avoid;
-    border-color: #8ca890;
+    border-color: #829d86;
+    background: white;
+    color: black;
     box-shadow: none;
   }
 }
