@@ -30,7 +30,7 @@ export function MushafVerseActions({ verse, onClear }: { verse: TajweedPageVerse
   }, [verse.verseKey]);
 
   useEffect(() => {
-    if (!tafsirOpen || tafsir || loading) return;
+    if (!tafsirOpen || tafsir) return;
     const controller = new AbortController();
     setLoading(true);
     setTafsirError("");
@@ -47,7 +47,7 @@ export function MushafVerseActions({ verse, onClear }: { verse: TajweedPageVerse
       })
       .finally(() => setLoading(false));
     return () => controller.abort();
-  }, [ayah, loading, surah, tafsir, tafsirOpen]);
+  }, [ayah, surah, tafsir, tafsirOpen]);
 
   async function copyVerse() {
     await navigator.clipboard.writeText(`${verse.textUthmani}\n\nالقرآن الكريم · ${verse.verseKey}`);
