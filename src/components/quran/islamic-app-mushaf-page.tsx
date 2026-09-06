@@ -3,11 +3,38 @@
 import Image from "next/image";
 import { ArrowLeft, ArrowRight, BookOpenText, Palette, Rows3 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Input } from "@/components/motion/input";
-import type { MushafPage } from "@/domain/quran";
+import { MushafVerseActions } from "@/components/quran/mushaf-verse-actions";
+import type { MushafLayoutLine, MushafLayoutWord, MushafPage, TajweedPageVerse } from "@/domain/quran";
 import { islamicAppMushafUrl } from "@/lib/islamic/quran-utils";
 import { progressRepository } from "@/lib/storage/repositories";
+
+function verseKeyFromLocation(location: string) {
+  const [surah, ayah] = location.split(":");
+  return surah && ayah ? `${surah}:${ayah}` : "";
+}
+
+function visualGridRow(lines: MushafLayoutLine[], index: number) {
+  const current = lines[index];
+  if (!current) return 1;
+  if (current.type === "text") return Math.max(1, Math.min(15, current.line));
+
+  let groupStart = index;
+  let groupEnd = index;
+  while (groupStart > 0 && lines[groupStart - 1]?.line === current.line) groupStart -= 1;
+  while (groupEnd + 1 < lines.length && lines[groupEnd + 1]?.line === current.line) groupEnd += 1;
+
+  const group = lines.slice(groupStart, groupEnd + 1);
+  const specialEntries = group.filter((entry) => entry.type !== "text");
+  const hasTextOnSameRow = group.some((entry) => entry.type === "text");
+  const specialIndex = group
+    .slice(0, index - groupStart + 1)
+    .filter((entry) => entry.type !== "text").length - 1;
+
+  const firstSpecialRow = current.line - specialEntries.length + (hasTextOnSameRow ? 0 : 1);
+  return Math.max(1, Math.min(15, firstSpecialRow + Math.max(0, specialIndex)));
+}
 
 export function IslamicAppMushafPage({ page }: { page: MushafPage }) {
   const router = useRouter();
@@ -15,13 +42,21 @@ export function IslamicAppMushafPage({ page }: { page: MushafPage }) {
   const startX = useRef<number | null>(null);
   const fallbackImageUrl = islamicAppMushafUrl(page.pageNumber, "light", "uthmani");
   const [imageUrl, setImageUrl] = useState(page.imageUrl ?? fallbackImageUrl);
-  const [chapterId = "1"] = (page.firstVerseKey ?? "1:1").split(":");
+  const [selectedVerse, setSelectedVerse] = useState<TajweedPageVerse | null>(null);
+  const [chapterId = "1"] = (page.firstVerseKey ?? page.verses?.[0]?.verseKey ?? "1:1").split(":");
   const chapterNumber = Number(chapterId) || 1;
+  const qcfFontName = `QCFPage${page.pageNumber}${page.mode === "tajweed" ? "T" : "P"}`;
+
+  const versesByKey = useMemo(
+    () => new Map((page.verses ?? []).map((verse) => [verse.verseKey, verse])),
+    [page.verses],
+  );
 
   useEffect(() => {
     setImageUrl(page.imageUrl ?? fallbackImageUrl);
     setJump(String(page.pageNumber));
-    const [currentChapterId = "1", verseNumber = "1"] = (page.firstVerseKey ?? "1:1").split(":");
+    setSelectedVerse(null);
+    const [currentChapterId = "1", verseNumber = "1"] = (page.firstVerseKey ?? page.verses?.[0]?.verseKey ?? "1:1").split(":");
     void progressRepository.save({
       id: "quran-current",
       chapterId: Number(currentChapterId),
@@ -46,6 +81,40 @@ export function IslamicAppMushafPage({ page }: { page: MushafPage }) {
     if (Math.abs(delta) >= 60) go(page.pageNumber + (delta > 0 ? 1 : -1));
   };
 
+  function selectVerseFromWord(word: MushafLayoutWord) {
+    const verseKey = verseKeyFromLocation(word.location);
+    if (!verseKey) return;
+
+    const layoutWords = (page.layout ?? [])
+      .flatMap((line) => line.words)
+      .filter((candidate) => verseKeyFromLocation(candidate.location) === verseKey && !candidate.isEnd)
+      .map((candidate) => candidate.word);
+    const layoutVerseText = layoutWords.join(" ");
+    const providedVerse = versesByKey.get(verseKey);
+
+    if (providedVerse) {
+      const hasSeparateBasmala = page.layout?.some((line) => line.type === "basmala") ?? false;
+      const textUthmani = providedVerse.verseNumber === 1 && hasSeparateBasmala && layoutVerseText
+        ? layoutVerseText
+        : providedVerse.textUthmani;
+      setSelectedVerse({ ...providedVerse, textUthmani, tajweedMarkup: textUthmani });
+      return;
+    }
+
+    if (!layoutVerseText) return;
+    const [surah, ayah] = verseKey.split(":");
+    const verseNumber = Number(ayah);
+    setSelectedVerse({
+      id: Number(`${surah}${ayah}`),
+      verseKey,
+      verseNumber,
+      textUthmani: layoutVerseText,
+      tajweedMarkup: layoutVerseText,
+    });
+  }
+
+  const hasInteractiveQcf = Boolean(page.layout?.length && page.fontUrl);
+
   return <main className="mushaf-reader authentic-mushaf-reader">
     <header className="mushaf-toolbar">
       <nav className="mushaf-mode-switcher" aria-label="أوضاع عرض القرآن">
@@ -59,27 +128,70 @@ export function IslamicAppMushafPage({ page }: { page: MushafPage }) {
       </form>
     </header>
 
+    {hasInteractiveQcf && (
+      <p className="mushaf-interaction-hint">اضغط على أي كلمة في الصفحة لتحديد آيتها، ثم يمكنك نسخها أو فتح تفسيرها أو مشاركتها.</p>
+    )}
+
     <section className="mushaf-stage" onPointerDown={(event) => { startX.current = event.clientX; }} onPointerUp={(event) => finishSwipe(event.clientX)}>
-      {page.mode === "mushaf" ? (
+      {hasInteractiveQcf ? (
+        <>
+          <style>{`@font-face{font-family:"${qcfFontName}";src:url("${page.fontUrl}") format("truetype");font-display:block;}`}</style>
+          <div className={`qcf-mushaf-page ${page.mode === "tajweed" ? "qcf-mushaf-tajweed" : ""}`}>
+            <div className="qcf-mushaf-inner notranslate" translate="no">
+              {page.layout?.map((line, index, lines) => {
+                const gridRow = visualGridRow(lines, index);
+
+                if (line.type === "surah-header") {
+                  return <div key={`${line.line}-${index}`} className="qcf-mushaf-line qcf-surah-header" style={{ gridRow }}><span>{line.text}</span></div>;
+                }
+
+                if (!line.words.length) {
+                  return <div key={`${line.line}-${index}`} className={`qcf-mushaf-line qcf-plain-line ${line.type === "basmala" ? "qcf-plain-basmala" : ""}`} style={{ gridRow }}><span>{line.text}</span></div>;
+                }
+
+                return (
+                  <div key={`${line.line}-${index}`} className={`qcf-mushaf-line ${line.type === "basmala" ? "qcf-basmala-line" : ""}`} style={{ gridRow }}>
+                    {line.words.map((word) => {
+                      const verseKey = verseKeyFromLocation(word.location);
+                      const selected = selectedVerse?.verseKey === verseKey;
+                      return (
+                        <button
+                          type="button"
+                          key={word.location}
+                          className={`qcf-mushaf-word ${selected ? "qcf-mushaf-word-selected" : ""}`}
+                          style={{ fontFamily: `"${qcfFontName}"` }}
+                          onClick={() => selectVerseFromWord(word)}
+                          aria-label={`${word.word}${verseKey ? `، الآية ${verseKey}` : ""}`}
+                          title={word.word}
+                        >
+                          {word.qpcV2}
+                        </button>
+                      );
+                    })}
+                  </div>
+                );
+              })}
+            </div>
+            <span className="qcf-mushaf-page-number">{page.pageNumber.toLocaleString("ar-SA")}</span>
+          </div>
+        </>
+      ) : (
         <div className="islamic-mushaf-frame authentic-mushaf-frame notranslate" translate="no">
           <Image
             src={imageUrl}
             alt={`صفحة ${page.pageNumber} من المصحف`}
             width={1200}
             height={1700}
-            sizes="(max-width: 760px) 100vw, 840px"
+            sizes="(max-width: 760px) calc(100vw - 2rem), 820px"
             priority
             unoptimized
             onError={() => { if (imageUrl !== fallbackImageUrl) setImageUrl(fallbackImageUrl); }}
           />
         </div>
-      ) : (
-        <div className="tajweed-page notranslate" translate="no">
-          <div className="mushaf-page-meta"><span>تجويد عثماني ملوّن</span><span>صفحة {page.pageNumber.toLocaleString("ar-SA")}</span></div>
-          {page.verses?.map((verse) => <article id={`ayah-${verse.verseNumber}`} key={verse.id}><a href={`/quran/${verse.verseKey.split(":")[0]}?view=cards#ayah-${verse.verseNumber}`}>{verse.verseKey}</a><p dangerouslySetInnerHTML={{ __html: verse.tajweedMarkup }} /></article>) ?? <div className="mushaf-loading"><BookOpenText />لا توجد آيات في هذه الصفحة.</div>}
-        </div>
       )}
     </section>
+
+    {selectedVerse && <MushafVerseActions verse={selectedVerse} onClear={() => setSelectedVerse(null)} />}
 
     <nav className="mushaf-pagination" aria-label="التنقل بين صفحات المصحف">
       <button type="button" onClick={() => go(page.pageNumber - 1)} disabled={page.pageNumber === 1}><ArrowRight />الصفحة السابقة</button>
@@ -87,10 +199,12 @@ export function IslamicAppMushafPage({ page }: { page: MushafPage }) {
       <button type="button" onClick={() => go(page.pageNumber + 1)} disabled={page.pageNumber === 604}>الصفحة التالية<ArrowLeft /></button>
     </nav>
 
-    {page.mode === "mushaf" ? (
-      <p className="source-line mushaf-source-note">صفحة المصحف الكاملة من <a href={page.sourceUrl} target="_blank" rel="noreferrer">Al Furqan</a> بصيغة SVG، مع <a href={`https://api.islamic.app/v1/mushaf/page/${page.pageNumber}.svg`} target="_blank" rel="noreferrer">Islamic App</a> كمصدر احتياطي. لا يعيد الموقع تركيب أسطر المصحف أو زخارفه.</p>
+    {hasInteractiveQcf ? (
+      <p className="source-line mushaf-source-note">عرض الصفحة بخطوط QCF {page.mode === "tajweed" ? "V4 الملوّنة للتجويد" : "V2"} وتخطيط الصفحة من <a href="https://alfurqan.online/docs" target="_blank" rel="noreferrer">Al Furqan</a>. النص التفاعلي للنسخ مرتبط بآيات الصفحة الموثقة ولا يغيّر رسم المصحف.</p>
+    ) : page.mode === "tajweed" ? (
+      <p className="source-line mushaf-source-note">تعذر تحميل خط التجويد التفاعلي لهذه الصفحة، لذلك عُرضت الصفحة الأصلية بدل إظهار خطأ يمنع القراءة. أعد المحاولة لاحقًا لاستعادة ألوان التجويد.</p>
     ) : (
-      <p className="source-line">نص التجويد من <a href={page.sourceUrl} target="_blank" rel="noreferrer">{page.provider}</a>.</p>
+      <p className="source-line mushaf-source-note">صفحة المصحف الكاملة من <a href={page.sourceUrl} target="_blank" rel="noreferrer">Al Furqan</a> بصيغة SVG، مع <a href={`https://api.islamic.app/v1/mushaf/page/${page.pageNumber}.svg`} target="_blank" rel="noreferrer">Islamic App</a> كمصدر احتياطي.</p>
     )}
   </main>;
 }
