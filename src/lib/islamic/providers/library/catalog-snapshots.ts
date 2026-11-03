@@ -1,5 +1,5 @@
-import turathCatalog from "@/data/library/turath-catalog.json";
-import islamicCatalog from "@/data/library/islamic-app-catalog.json";
+import turathCatalog from "../../../../data/library/turath-catalog.json";
+import islamicCatalog from "../../../../data/library/islamic-app-catalog.json";
 import { normalizeArabicSearch } from "../../search";
 import type { LibraryBook, LibraryGenre, LibraryPage } from "@/domain/library";
 
@@ -58,7 +58,7 @@ const entries: CatalogEntry[] = [
     id: String(id), title, author, section: categories.get(category) ?? "تراث إسلامي",
     genre: turathGenre(category),
     source: "turath" as const, url: `https://app.turath.io/book/${id}`,
-    pdf: false, text: true,
+    pdf: false, text: false,
   })),
 ];
 
