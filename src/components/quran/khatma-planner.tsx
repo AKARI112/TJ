@@ -46,7 +46,7 @@ export function KhatmaPlanner() {
     {plan && target ? <>
       <p className="text-sm leading-7 text-muted-foreground">صفحتك المقترحة لهذا اليوم: <strong className="text-foreground">{target.targetPage.toLocaleString("ar-SA")}</strong> · متوسط {target.pagesPerDay.toLocaleString("ar-SA")} صفحة يوميًا. هذه أهداف اختيارية وليست تسجيلًا للصفحات المقروءة.</p>
       <div className="mt-4 flex flex-wrap items-center gap-3">
-        <a href={`/quran/page/${Math.min(604, plan.startPage)}`} className="inline-flex min-h-10 items-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground"><BookOpenText className="size-4" />افتح المصحف</a>
+        <a href={`/quran/page/${Math.min(604, startPage)}`} className="inline-flex min-h-10 items-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground"><BookOpenText className="size-4" />افتح المصحف</a>
         <button type="button" onClick={() => void remove()} disabled={busy} className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-border px-3 text-sm"><Trash2 className="size-4" />إزالة الخطة</button>
       </div>
     </> : <>
