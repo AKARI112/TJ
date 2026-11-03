@@ -33,6 +33,7 @@ import {
   SPRING_PRESS,
 } from "@/lib/ease";
 import { cn } from "@/lib/utils";
+import { desktopSidebarOrder } from "@/lib/sidebar-placement";
 
 type SidebarState = "expanded" | "collapsed";
 type SidebarSide = "left" | "right";
@@ -553,7 +554,7 @@ export const AnimatedSidebar = forwardRef<HTMLElement, AnimatedSidebarProps>(
         className={cn(
           "group/sidebar relative hidden h-auto shrink-0 md:block will-change-[width]",
           "peer",
-          side === "right" && "order-last",
+          desktopSidebarOrder(side),
           className,
         )}
       >
