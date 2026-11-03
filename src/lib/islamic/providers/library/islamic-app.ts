@@ -1,28 +1,73 @@
 import "server-only";
 
 import { z } from "zod";
-import type { LibraryBook, LibraryBookDetail, LibraryBookText, LibraryGenre, LibraryPage } from "@/domain/library";
+import type { LibraryBookDetail, LibraryBookText, LibraryGenre, LibraryPage } from "@/domain/library";
+import { parseLibraryCatalog } from "./catalog";
 
 const BASE_URL = "https://api.islamic.app/v1";
+// Islamic App documents the old bare-response API as a supported compatibility endpoint.
+const LEGACY_BASE_URL = "https://islamic.app/api";
 const genreSchema = z.enum(["tafsir", "aqeedah", "fiqh", "usul-fiqh", "tasawwuf", "seerah", "tarikh", "lughah", "mantiq", "firaq", "general"]);
-const listBookSchema = z.object({ slug: z.string(), title_ar: z.string(), title_en: z.string().nullable().optional(), author_id: z.string(), author_name_ar: z.string(), author_name_en: z.string().nullable().optional(), author_died_year_hijri: z.number().nullable().optional(), genre: genreSchema, school: z.string().nullable().optional(), pages: z.number().nullable().optional(), has_pdf: z.boolean(), has_text: z.boolean(), has_chapters: z.boolean() });
 const authorSchema = z.object({ id: z.string(), name_ar: z.string(), name_en: z.string().nullable().optional(), died_year_hijri: z.number().nullable().optional(), born_year_hijri: z.number().nullable().optional(), bio_ar: z.string().nullable().optional() });
 const detailBookSchema = z.object({ slug: z.string(), title_ar: z.string(), title_en: z.string().nullable().optional(), genre: genreSchema, school: z.string().nullable().optional(), written_year_hijri: z.number().nullable().optional(), pages: z.number().nullable().optional(), description_ar: z.string().nullable().optional(), description_en: z.string().nullable().optional(), has_pdf: z.boolean(), has_text: z.boolean(), has_chapters: z.boolean(), author: authorSchema, sources: z.array(z.object({ source_name: z.string(), source_url: z.string().url().nullable().optional() })) });
 const textSchema = z.object({ slug: z.string(), source: z.enum(["turath", "openiti"]), pageCount: z.number(), chapterCount: z.number(), bibliography: z.record(z.string(), z.union([z.string(), z.number()])).catch({}), chapters: z.array(z.object({ title: z.string(), level: z.number().int().positive().catch(1), vol: z.string().nullable().optional(), page: z.number().nullable().optional(), text: z.string() })) });
 
+/**
+ * Both the v1 envelope and the documented legacy bare-response endpoint
+ * are supported. Keep the first successful, schema-valid response.
+ */
 async function request<T>(path: string, schema: z.ZodType<T>, revalidate: number): Promise<T> {
-  const response = await fetch(`${BASE_URL}${path}`, { next: { revalidate }, headers: { Accept: "application/json" } });
-  if (!response.ok) throw new Error(`Islamic App library ${path}: ${response.status}`);
-  return z.object({ code: z.number(), status: z.string(), data: schema }).parse(await response.json()).data;
+  let lastError: unknown;
+  for (const base of [BASE_URL, LEGACY_BASE_URL]) {
+    try {
+      const response = await fetch(`${base}${path}`, {
+        next: { revalidate },
+        signal: AbortSignal.timeout(7000),
+        headers: { Accept: "application/json" },
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const payload: unknown = await response.json();
+      const wrapped = z.object({ code: z.number(), status: z.string(), data: schema }).safeParse(payload);
+      if (wrapped.success) {
+        if (wrapped.data.code !== 200) throw new Error(`API code ${wrapped.data.code}`);
+        return wrapped.data.data;
+      }
+      return schema.parse(payload);
+    } catch (error) {
+      lastError = error;
+      console.warn("[library] source unavailable or response invalid", {
+        host: new URL(base).host,
+        path: path.split("?")[0],
+        message: error instanceof Error ? error.message : "unknown",
+      });
+    }
+  }
+  throw new Error("Library sources unavailable", { cause: lastError });
 }
 
-function normalizeBook(book: z.infer<typeof listBookSchema>): LibraryBook { return { slug: book.slug, titleArabic: book.title_ar, titleEnglish: book.title_en ?? undefined, authorId: book.author_id, authorArabic: book.author_name_ar, authorEnglish: book.author_name_en ?? undefined, authorDiedHijri: book.author_died_year_hijri ?? undefined, genre: book.genre, school: book.school ?? undefined, pages: book.pages ?? undefined, hasPdf: book.has_pdf, hasText: book.has_text, hasChapters: book.has_chapters }; }
-
 export async function getLibraryBooks(options: { genre?: LibraryGenre; limit?: number; offset?: number } = {}): Promise<LibraryPage> {
-  const params = new URLSearchParams({ limit: String(Math.min(100, Math.max(1, options.limit ?? 100))), offset: String(Math.max(0, options.offset ?? 0)) });
+  const requested = { limit: Math.min(100, Math.max(1, options.limit ?? 100)), offset: Math.max(0, options.offset ?? 0) };
+  const params = new URLSearchParams({ limit: String(requested.limit), offset: String(requested.offset) });
   if (options.genre) params.set("genre", options.genre);
-  const data = await request(`/library/books?${params}`, z.object({ total: z.number(), limit: z.number(), offset: z.number(), books: z.array(listBookSchema) }), 300);
-  return { ...data, books: data.books.map(normalizeBook) };
+  let lastError: unknown;
+  for (const base of [BASE_URL, LEGACY_BASE_URL]) {
+    try {
+      const response = await fetch(`${base}/library/books?${params}`, {
+        next: { revalidate: 300 },
+        signal: AbortSignal.timeout(7000),
+        headers: { Accept: "application/json" },
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      return parseLibraryCatalog(await response.json(), requested);
+    } catch (error) {
+      lastError = error;
+      console.warn("[library] catalog source failed", {
+        host: new URL(base).host,
+        message: error instanceof Error ? error.message : "unknown",
+      });
+    }
+  }
+  throw new Error("Could not load the book catalog from either documented source", { cause: lastError });
 }
 
 export async function getLibraryBook(slug: string): Promise<LibraryBookDetail> {
