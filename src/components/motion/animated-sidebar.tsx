@@ -378,10 +378,12 @@ function MobileSidebar({
   // The scrim spans the viewport edges but paints a colour, and the panel is
   // inset off one side and paints its own surface, so no layer here is a
   // transparent edge-spanning one. See tests/fixed-overlay-edge-sampling.test.tsx.
+  // Physical left/right must be used here: CSS logical start/end flip in RTL
+  // and would open a side="right" panel on the left of Arabic pages.
   return createPortal(
     <div
       className={cn(
-        "pointer-events-none fixed start-0 top-0 z-50 size-0 md:hidden",
+        "pointer-events-none fixed left-0 top-0 z-50 size-0 md:hidden",
         hidden && !context.openMobile ? "invisible" : "visible",
       )}
     >
@@ -470,7 +472,7 @@ function MobileSidebar({
         className={cn(
           "pointer-events-auto fixed inset-y-0 flex h-dvh w-(--sidebar-width-mobile) max-w-[88vw] flex-col overflow-hidden",
           "border-border bg-background shadow-2xl will-change-transform",
-          side === "left" ? "start-0 border-e" : "end-0 border-s",
+          side === "left" ? "left-0 border-r" : "right-0 border-l",
           !context.openMobile && "pointer-events-none",
           className,
         )}
