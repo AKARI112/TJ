@@ -34,7 +34,7 @@ export function ReadingProgressTracker({ verses, chapterName }: { verses: QuranV
       const element = document.getElementById(`ayah-${verse.verseNumber}`);
       if (element) observer.observe(element);
     }
-    void historyRepository.record({ id: `quran-${verses[0]?.chapterId ?? 0}`, type: "quran", title: chapterName, href: `/quran/${verses[0]?.chapterId ?? 1}`, viewedAt: new Date().toISOString() });
+    void historyRepository.record({ id: `quran-${verses[0]?.chapterId ?? 0}`, type: "quran", title: chapterName, href: `/quran/${verses[0]?.chapterId ?? 1}?view=cards`, viewedAt: new Date().toISOString() });
 
     return () => { window.clearTimeout(timer); observer.disconnect(); };
   }, [chapterName, verses]);

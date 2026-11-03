@@ -32,7 +32,7 @@ export function HomeDashboard({ daily }: { daily: DailyContent }) {
   const date = useMemo(() => now?.toLocaleDateString("ar-SA", { weekday: "long", day: "numeric", month: "long", year: "numeric" }) ?? "…", [now]);
   const hijri = useMemo(() => now?.toLocaleDateString("ar-SA-u-ca-islamic-umalqura", { day: "numeric", month: "long", year: "numeric" }) ?? "…", [now]);
 
-  const continueHref = !progress ? "/quran" : progress.readingMode === "reading" ? `/quran/${progress.chapterId}#ayah-${progress.verseNumber}` : `/quran/page/${progress.pageNumber}${progress.readingMode === "tajweed" ? "?mode=tajweed" : ""}`;
+  const continueHref = !progress ? "/quran" : progress.readingMode === "reading" ? `/quran/${progress.chapterId}?view=cards#ayah-${progress.verseNumber}` : `/quran/page/${progress.pageNumber}${progress.readingMode === "tajweed" ? "?mode=tajweed" : ""}`;
 
   const quickActions = [
     { id: "quran", label: "القرآن", icon: <BookOpenText className="size-4" />, content: <QuickPanel href="/quran" title="القرآن الكريم" description="تابع قراءتك أو اختر سورة" /> },

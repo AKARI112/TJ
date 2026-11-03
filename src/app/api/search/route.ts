@@ -71,7 +71,7 @@ export async function GET(request: Request) {
   const matchedChapter = direct ? chapterResult.find((chapter) => chapter.id === Number(direct[1])) : undefined;
   const page = /^(?:صفحة\s*)?(\d{1,3})$/.exec(query)?.[1];
   const shortcuts: Hit[] = direct && matchedChapter && Number(direct[2]) <= matchedChapter.versesCount
-    ? [{ id: `/quran/${direct[1]}#ayah-${direct[2]}`, title: `الآية ${direct[1]}:${direct[2]}`, description: "مرجع قرآني", type: "quran" }]
+    ? [{ id: `/quran/${direct[1]}?view=cards#ayah-${direct[2]}`, title: `الآية ${direct[1]}:${direct[2]}`, description: "مرجع قرآني", type: "quran" }]
     : page && Number(page) >= 1 && Number(page) <= 604
       ? [{ id: `/quran/page/${page}`, title: `صفحة المصحف ${page}`, description: "انتقال مباشر", type: "quran" }]
       : [];
