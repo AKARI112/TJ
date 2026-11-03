@@ -60,7 +60,7 @@ export async function GET(request: Request) {
     .filter((item) => normalizeArabicSearch(item.title).includes(needle))
     .map((item) => ({ id: `/hadith/${item.id}`, title: item.title, description: "حديث · HadeethEnc", type: "hadith" }));
 
-  const books: Hit[] = sourceResults.slice(6).flatMap((result) => result.status === "fulfilled" ? result.value.books : [])
+  const books: Hit[] = [sourceResults[6], sourceResults[7], sourceResults[8]].flatMap((result) => result.status === "fulfilled" ? result.value.books : [])
     .filter((book) => normalizeArabicSearch(`${book.titleArabic} ${book.authorArabic} ${book.titleEnglish ?? ""}`).includes(needle))
     .map((book) => ({
       id: `/library/${encodeURIComponent(book.slug)}`, title: book.titleArabic,
