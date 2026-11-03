@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { BookOpenText, ChevronLeft, Palette, Rows3 } from "lucide-react";
 import { getChapters } from "@/lib/islamic/providers/quran";
+import { KhatmaPlanner } from "@/components/quran/khatma-planner";
 
 export const metadata: Metadata = { title: "القرآن الكريم", description: "اقرأ المصحف صفحةً كاملة، مع بطاقات منفصلة للمشاركة والحفظ." };
 export const dynamic = "force-dynamic";
@@ -15,6 +16,8 @@ export default async function QuranPage() {
           <h1>المصحف أولًا، والبطاقات للمشاركة</h1>
           <p>القراءة الأساسية تعرض صفحة المصحف كاملة بصورتها التقليدية بدل إعادة تركيب النص داخل بطاقات أو أسطر مصطنعة. بطاقات الآيات بقيت كمساحة منفصلة للحفظ والمشاركة.</p>
         </header>
+
+        <KhatmaPlanner />
 
         <nav className="quran-mode-links" aria-label="أوضاع قراءة القرآن">
           <a href="/quran/page/1"><BookOpenText /><span><strong>المصحف التقليدي</strong><small>الأسلوب الأساسي · ٦٠٤ صفحة SVG كاملة عالية الوضوح</small></span></a>
