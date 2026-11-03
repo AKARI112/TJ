@@ -1,5 +1,5 @@
 import type { PrayerTiming } from "@/domain/prayer";
-import { addCalendarDays, zonedClockMinutes, zonedClockToInstant, zonedIsoDate } from "@/lib/islamic/prayer-timezone";
+import { addCalendarDays, zonedClockMinutes, zonedClockToInstant, zonedIsoDate } from "./prayer-timezone";
 
 export function minutesFromTime(value: string) {
   const [hours, minutes] = value.split(":").map(Number);
