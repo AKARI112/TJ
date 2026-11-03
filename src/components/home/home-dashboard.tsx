@@ -32,6 +32,8 @@ export function HomeDashboard({ daily }: { daily: DailyContent }) {
   const date = useMemo(() => now?.toLocaleDateString("ar-SA", { weekday: "long", day: "numeric", month: "long", year: "numeric" }) ?? "…", [now]);
   const hijri = useMemo(() => now?.toLocaleDateString("ar-SA-u-ca-islamic-umalqura", { day: "numeric", month: "long", year: "numeric" }) ?? "…", [now]);
 
+  const continueHref = !progress ? "/quran" : progress.readingMode === "reading" ? `/quran/${progress.chapterId}?view=cards#ayah-${progress.verseNumber}` : `/quran/page/${progress.pageNumber}${progress.readingMode === "tajweed" ? "?mode=tajweed" : ""}`;
+
   const quickActions = [
     { id: "quran", label: "القرآن", icon: <BookOpenText className="size-4" />, content: <QuickPanel href="/quran" title="القرآن الكريم" description="تابع قراءتك أو اختر سورة" /> },
     { id: "adhkar", label: "الأذكار", icon: <Sparkles className="size-4" />, content: <QuickPanel href="/adhkar" title="وردك اليومي" description="أذكار موثقة بعدّاد هادئ" /> },
@@ -64,7 +66,7 @@ export function HomeDashboard({ daily }: { daily: DailyContent }) {
             </div>
             <div className="progress-orbit" aria-hidden="true"><BookOpenText className="size-5" /></div>
           </div>
-          <a href={progress ? `/quran/${progress.chapterId}#ayah-${progress.verseNumber}` : "/quran"} className="text-action mt-8">{progress ? "تابع من حيث توقفت" : "افتح القرآن"} <ArrowLeft className="size-4" /></a>
+          <a href={continueHref} className="text-action mt-8">{progress ? "تابع من حيث توقفت" : "افتح القرآن"} <ArrowLeft className="size-4" /></a>
         </section>
       </div>
 

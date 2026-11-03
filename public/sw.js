@@ -1,14 +1,27 @@
-const VERSION = "dhu-al-jalal-v4";
+const VERSION = "dhu-al-jalal-v5";
 const SHELL_CACHE = `${VERSION}-shell`;
 const CONTENT_CACHE = `${VERSION}-content`;
+const ASSET_CACHE = `${VERSION}-assets`;
 const SHELL = ["/", "/offline", "/quran", "/adhkar", "/dua", "/hisn", "/library", "/manifest.webmanifest", "/icon.svg"];
+const MAX_PAGES = 75;
+const MAX_ASSETS = 150;
+
+async function trimCache(cache, maximum) {
+  const keys = await cache.keys();
+  for (const request of keys.slice(0, Math.max(0, keys.length - maximum))) {
+    await cache.delete(request);
+  }
+}
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(SHELL_CACHE).then((cache) => cache.addAll(SHELL)));
   self.skipWaiting();
 });
+
 self.addEventListener("activate", (event) => {
-  event.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter((key) => !key.startsWith(VERSION)).map((key) => caches.delete(key)))));
+  event.waitUntil(caches.keys().then((keys) =>
+    Promise.all(keys.filter((key) => !key.startsWith(VERSION)).map((key) => caches.delete(key)))
+  ));
   self.clients.claim();
 });
 
@@ -22,8 +35,10 @@ async function navigationResponse(request) {
     if (response.ok) {
       const cache = await caches.open(CONTENT_CACHE);
       await cache.put(request, response.clone());
+      await trimCache(cache, MAX_PAGES);
+      return response;
     }
-    return response;
+    return (await caches.match(request)) || response;
   } catch {
     return (await caches.match(request)) || (await caches.match("/offline"));
   }
@@ -34,8 +49,9 @@ async function staticResponse(request) {
   if (cached) return cached;
   const response = await fetch(request);
   if (response.ok) {
-    const cache = await caches.open(SHELL_CACHE);
+    const cache = await caches.open(ASSET_CACHE);
     await cache.put(request, response.clone());
+    await trimCache(cache, MAX_ASSETS);
   }
   return response;
 }
@@ -46,6 +62,7 @@ async function contentResponse(request) {
     if (response.ok && response.type === "basic") {
       const cache = await caches.open(CONTENT_CACHE);
       await cache.put(request, response.clone());
+      await trimCache(cache, MAX_PAGES);
     }
     return response;
   }).catch(() => cached);

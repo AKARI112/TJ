@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { ArrowRight, BookOpenText, Share2 } from "lucide-react";
 import { redirect } from "next/navigation";
 import { ReadingProgressTracker } from "@/components/quran/reading-progress-tracker";
+import { ReadingTextSize } from "@/components/quran/reading-text-size";
 import { VerseTools } from "@/components/quran/verse-tools";
 import { getChapter } from "@/lib/islamic/providers/quran";
 
@@ -47,6 +48,7 @@ export default async function SurahPage({ params, searchParams }: SurahRouteProp
       <div className="quran-card-topbar">
         <a href="/quran" className="back-link"><ArrowRight className="size-4" />كل السور</a>
         <a href={`/quran/page/${firstPage}?surah=${id}`} className="quran-card-mushaf-link"><BookOpenText />العودة إلى المصحف</a>
+        <ReadingTextSize />
       </div>
 
       <header className="quran-card-header">

@@ -1,14 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { ArrowLeft, ArrowRight, BookOpenText, Palette, Rows3 } from "lucide-react";
+import { ArrowLeft, ArrowRight, BookOpenText, Bookmark, BookmarkCheck, Palette, Rows3 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Input } from "@/components/motion/input";
 import { MushafVerseActions } from "@/components/quran/mushaf-verse-actions";
 import type { MushafLayoutLine, MushafLayoutWord, MushafPage, TajweedPageVerse } from "@/domain/quran";
 import { islamicAppMushafUrl } from "@/lib/islamic/quran-utils";
-import { progressRepository } from "@/lib/storage/repositories";
+import { progressRepository, savedRepository } from "@/lib/storage/repositories";
 
 function verseKeyFromLocation(location: string) {
   const [surah, ayah] = location.split(":");
@@ -43,6 +43,7 @@ export function IslamicAppMushafPage({ page }: { page: MushafPage }) {
   const fallbackImageUrl = islamicAppMushafUrl(page.pageNumber, "light", "uthmani");
   const [imageUrl, setImageUrl] = useState(page.imageUrl ?? fallbackImageUrl);
   const [selectedVerse, setSelectedVerse] = useState<TajweedPageVerse | null>(null);
+  const [pageSaved, setPageSaved] = useState(false);
   const [chapterId = "1"] = (page.firstVerseKey ?? page.verses?.[0]?.verseKey ?? "1:1").split(":");
   const chapterNumber = Number(chapterId) || 1;
   const qcfFontName = `QCFPage${page.pageNumber}${page.mode === "tajweed" ? "T" : "P"}`;
@@ -68,6 +69,32 @@ export function IslamicAppMushafPage({ page }: { page: MushafPage }) {
       timestamp: new Date().toISOString(),
     });
   }, [fallbackImageUrl, page]);
+
+  useEffect(() => {
+    let active = true;
+    void savedRepository.get(`mushaf-page-${page.pageNumber}`)
+      .then((value) => { if (active) setPageSaved(Boolean(value)); })
+      .catch(() => { if (active) setPageSaved(false); });
+    return () => { active = false; };
+  }, [page.pageNumber]);
+
+  const togglePageSaved = async () => {
+    const id = `mushaf-page-${page.pageNumber}`;
+    if (pageSaved) {
+      await savedRepository.remove(id);
+      setPageSaved(false);
+    } else {
+      await savedRepository.save({
+        id, type: "mushaf-page",
+        title: `صفحة المصحف ${page.pageNumber}`,
+        href: `/quran/page/${page.pageNumber}`,
+        provider: page.provider, sourceUrl: page.sourceUrl,
+        reference: `صفحة ${page.pageNumber}`,
+        createdAt: new Date().toISOString(),
+      });
+      setPageSaved(true);
+    }
+  };
 
   const go = (target: number, mode = page.mode) => {
     if (target < 1 || target > 604) return;
@@ -126,6 +153,10 @@ export function IslamicAppMushafPage({ page }: { page: MushafPage }) {
         <Input aria-label="رقم صفحة المصحف" inputMode="numeric" value={jump} onChange={setJump} classNames={{ field: "h-10 rounded-xl", input: "text-center" }} />
         <button className="mushaf-go" type="submit">انتقال</button>
       </form>
+      <button type="button" onClick={() => void togglePageSaved()} aria-pressed={pageSaved} className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-border bg-card px-3 text-sm font-semibold text-foreground hover:bg-muted">
+        {pageSaved ? <BookmarkCheck className="size-4" /> : <Bookmark className="size-4" />}
+        {pageSaved ? "الصفحة محفوظة" : "حفظ الصفحة"}
+      </button>
     </header>
 
     {hasInteractiveQcf && (
