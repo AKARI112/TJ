@@ -2,13 +2,44 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { BookOpenText, ExternalLink, FileText } from "lucide-react";
 import { getLibraryBook, getLibraryBookText, libraryPdfUrl } from "@/lib/islamic/providers/library/islamic-app";
+import { findIslamicSnapshotBook } from "@/lib/islamic/providers/library/catalog-snapshots";
 
 type Props = { params: Promise<{ slug: string }>; searchParams: Promise<{ view?: string; section?: string }> };
-export async function generateMetadata({ params }: Props): Promise<Metadata> { try { const book = await getLibraryBook((await params).slug); return { title: book.titleArabic, description: book.descriptionArabic ?? `كتاب ${book.titleArabic} لـ${book.authorArabic}.` }; } catch { return { title: "كتاب غير موجود" }; } }
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const slug = (await params).slug;
+  const local = findIslamicSnapshotBook(slug);
+  if (local) return { title: local.titleArabic, description: `كتاب ${local.titleArabic} لـ${local.authorArabic}، من فهرس Islamic App.` };
+  try {
+    const book = await getLibraryBook(slug);
+    return { title: book.titleArabic, description: book.descriptionArabic ?? `كتاب ${book.titleArabic} لـ${book.authorArabic}.` };
+  } catch { return { title: "كتاب غير موجود" }; }
+}
 
 export default async function LibraryBookPage({ params, searchParams }: Props) {
   const [{ slug }, query] = await Promise.all([params, searchParams]);
-  let book; try { book = await getLibraryBook(slug); } catch { notFound(); }
+  let book;
+  try { book = await getLibraryBook(slug); }
+  catch {
+    const local = findIslamicSnapshotBook(slug);
+    if (!local) notFound();
+    const externalUrl = `https://islamic.app/library/${encodeURIComponent(slug)}`;
+    return <main className="book-detail">
+      <header className="page-intro">
+        <p className="eyebrow text-accent">المكتبة · Islamic App</p>
+        <h1>{local.titleArabic}</h1>
+        <p>{local.authorArabic}</p>
+      </header>
+      <section className="rounded-2xl border border-border bg-card p-6">
+        <BookOpenText className="mb-3 size-7 text-primary" aria-hidden="true" />
+        <h2 className="text-xl font-bold">بيانات الكتاب محفوظة في الفهرس المحلي</h2>
+        <p className="mt-3 text-sm leading-7 text-muted-foreground">خادم المكتبة الخارجي لا يقبل طلبات القراءة من خادمنا حاليًا. يمكنك فتح النسخة الأصلية لدى مصدرها، دون عرض نص غير موثق أو الادعاء بتوفر ملف غير متحقق منه.</p>
+        <div className="mt-5 flex flex-wrap gap-3">
+          <a href={externalUrl} target="_blank" rel="noopener noreferrer" className="primary-link"><ExternalLink className="size-4" />قراءة الكتاب لدى المصدر</a>
+          <a href="/library" className="inline-flex min-h-11 items-center rounded-xl border border-border px-4 font-semibold">العودة إلى المكتبة</a>
+        </div>
+      </section>
+    </main>;
+  }
   const view = query.view === "text" && book.hasText ? "text" : book.hasPdf ? "pdf" : "text";
   let text = null; if (view === "text" && book.hasText) { try { text = await getLibraryBookText(slug); } catch { text = null; } }
   const sectionPage = Math.max(1, Number(query.section) || 1); const pageSize = 12; const chapters = text?.chapters.slice((sectionPage - 1) * pageSize, sectionPage * pageSize) ?? []; const totalPages = text ? Math.ceil(text.chapters.length / pageSize) : 0;
