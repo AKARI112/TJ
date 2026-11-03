@@ -2,7 +2,7 @@ import "server-only";
 
 import { z } from "zod";
 import type { LibraryBookDetail, LibraryBookText, LibraryGenre, LibraryPage } from "@/domain/library";
-import { parseLibraryCatalog } from "./catalog";
+import { getIslamicSnapshotPage } from "./catalog-snapshots";
 
 const BASE_URL = "https://api.islamic.app/v1";
 // Islamic App documents the old bare-response API as a supported compatibility endpoint.
@@ -45,29 +45,13 @@ async function request<T>(path: string, schema: z.ZodType<T>, revalidate: number
   throw new Error("Library sources unavailable", { cause: lastError });
 }
 
+/**
+ * Do not call the library catalog at runtime: Islamic App returns 403 to the
+ * production Vercel region. Browse the verified metadata snapshot instead.
+ * This also provides stable results to the application's global search API.
+ */
 export async function getLibraryBooks(options: { genre?: LibraryGenre; limit?: number; offset?: number } = {}): Promise<LibraryPage> {
-  const requested = { limit: Math.min(100, Math.max(1, options.limit ?? 100)), offset: Math.max(0, options.offset ?? 0) };
-  const params = new URLSearchParams({ limit: String(requested.limit), offset: String(requested.offset) });
-  if (options.genre) params.set("genre", options.genre);
-  let lastError: unknown;
-  for (const base of [BASE_URL, LEGACY_BASE_URL]) {
-    try {
-      const response = await fetch(`${base}/library/books?${params}`, {
-        next: { revalidate: 300 },
-        signal: AbortSignal.timeout(7000),
-        headers: { Accept: "application/json" },
-      });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      return parseLibraryCatalog(await response.json(), requested);
-    } catch (error) {
-      lastError = error;
-      console.warn("[library] catalog source failed", {
-        host: new URL(base).host,
-        message: error instanceof Error ? error.message : "unknown",
-      });
-    }
-  }
-  throw new Error("Could not load the book catalog from either documented source", { cause: lastError });
+  return getIslamicSnapshotPage(options);
 }
 
 export async function getLibraryBook(slug: string): Promise<LibraryBookDetail> {
