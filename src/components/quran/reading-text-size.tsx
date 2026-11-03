@@ -17,7 +17,7 @@ export function ReadingTextSize() {
   }, []);
   useEffect(() => {
     document.documentElement.style.setProperty("--quran-reading-scale", String(size / 100));
-    return () => document.documentElement.style.removeProperty("--quran-reading-scale");
+    return () => { document.documentElement.style.removeProperty("--quran-reading-scale"); };
   }, [size]);
 
   function update(nextSize: number) {
