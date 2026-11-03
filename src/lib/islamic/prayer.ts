@@ -28,7 +28,7 @@ export function getPrayerState(timings: PrayerTiming[], now: Date, timeZone?: st
     nextDate.setHours(hours, minutes, 0, 0);
     if (tomorrow) nextDate.setDate(nextDate.getDate() + 1);
   }
-  return { current, next, millisecondsUntilNext: Math.max(0, nextDate.getTime() - now.getTime()) };
+  return { current, next: tomorrow ? { ...next, time: nextTime } : next, millisecondsUntilNext: Math.max(0, nextDate.getTime() - now.getTime()) };
 }
 
 export function formatCountdown(milliseconds: number) {
