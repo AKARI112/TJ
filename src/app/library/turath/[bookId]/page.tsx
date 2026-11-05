@@ -82,8 +82,8 @@ export default async function TurathBookPage({ params, searchParams }: Props) {
 
     <article lang="ar" dir="rtl" className="ebook-reader rounded-2xl border border-border bg-card px-4 py-6 sm:px-8 sm:py-10">
       {reading.headings.length > 0 && <header className="mb-6 border-b border-border pb-4">
-        {reading.headings.slice(-3).map((heading, index) => (
-          <h2 key={index} className={index === reading.headings.length - 1 ? "text-lg font-bold leading-9" : "text-sm leading-7 text-muted-foreground"}>{heading}</h2>
+        {reading.headings.slice(-3).map((heading, index, items) => (
+          <h2 key={index} className={index === items.length - 1 ? "text-lg font-bold leading-9" : "text-sm leading-7 text-muted-foreground"}>{heading}</h2>
         ))}
       </header>}
       <p className="whitespace-pre-wrap break-words text-[1.1rem] leading-[2.15] text-foreground sm:text-[1.2rem]">
