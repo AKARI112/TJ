@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowUpLeft, BookOpenText, Search, LibraryBig } from "lucide-react";
+import { ArrowLeft, BookOpenText, Search, LibraryBig } from "lucide-react";
 import type { CatalogEntry, LibraryFilter, LibrarySource } from "@/lib/islamic/providers/library/catalog-snapshots";
 import { catalogStats } from "@/lib/islamic/providers/library/catalog-snapshots";
 
