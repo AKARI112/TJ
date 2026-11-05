@@ -61,6 +61,29 @@ describe("Quran Gallery MCP response normalization", () => {
     expect(result.hits[0]?.printedPage).toBeNull();
   });
 
+
+  it("uses structured book/page identifiers for verified in-app reading", () => {
+    const result = normalizeShamelaSearch({
+      passages: [{
+        book: "صحيح البخاري - طبعة تجريبية",
+        author: "البخاري",
+        docId: "1681:10",
+        body: "نص من صفحة المصدر",
+        printedPage: "1/ 6",
+      }],
+    });
+    expect(result.hits[0]?.sourceUrl).toBe("https://shamela.ws/book/1681/10");
+    expect(result.hits[0]?.pageId).toBe(10);
+    expect(result.hits[0]?.excerpt).toBe("نص من صفحة المصدر");
+  });
+
+  it("never constructs source URLs from unvalidated identifiers", () => {
+    const result = normalizeShamelaSearch({
+      passages: [{ book: "اسم تجريبي", docId: "abc:10", url: "https://evil.example/book/12/5" }],
+    });
+    expect(result.hits[0]?.sourceUrl).toBeNull();
+  });
+
   it("limits scopes to the documented library categories", () => {
     expect(isShamelaScope(DEFAULT_SHAMELA_SCOPE)).toBe(true);
     expect(isShamelaScope("unscoped")).toBe(false);
