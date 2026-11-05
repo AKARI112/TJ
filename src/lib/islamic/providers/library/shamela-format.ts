@@ -38,6 +38,28 @@ function optionalNumber(input: RecordValue, key: string): number | null {
   const value = input[key];
   return typeof value === "number" && Number.isFinite(value) ? value : null;
 }
+function identifier(input: unknown) {
+  if (typeof input === "number" && Number.isSafeInteger(input) && input > 0) return input;
+  if (typeof input === "string" && /^[1-9]\d*$/.test(input)) {
+    const value = Number(input);
+    return Number.isSafeInteger(value) ? value : null;
+  }
+  return null;
+}
+
+/** Resolve only provider-owned, validated book/page locators (never arbitrary external URLs). */
+function pageLink(input: RecordValue): string | null {
+  const existing = safeShamelaUrl(input.sourceUrl ?? input.source_url ?? input.url);
+  if (existing) return existing;
+
+  const docId = firstText(input, "docId", "doc_id", "id");
+  const matched = docId ? /^([1-9]\d*):([1-9]\d*)$/.exec(docId) : null;
+  const bookId = matched ? identifier(matched[1]) : identifier(input.bookId ?? input.book_id);
+  const pageId = matched ? identifier(matched[2]) : identifier(input.pageId ?? input.page_id);
+  if (!bookId || !pageId) return null;
+  return `https://shamela.ws/book/${bookId}/${pageId}`;
+}
+
 
 export type ShamelaHit = {
   book: string;
@@ -85,13 +107,13 @@ export function normalizeShamelaSearch(input: unknown): ShamelaSearch {
     hits.push({
       book,
       author: firstText(row, "author", "authorName", "author_name"),
-      excerpt: firstText(row, "excerpt", "text", "passage", "snippet", "quote"),
+      excerpt: firstText(row, "excerpt", "text", "passage", "snippet", "quote", "body"),
       printedPage: firstText(row, "printedPage", "printed_page"),
-      sourceUrl: safeShamelaUrl(row.sourceUrl ?? row.source_url),
+      sourceUrl: pageLink(row),
       matchedIn: matched === "body" || matched === "footnote" || matched === "both" ? matched : "unknown",
       matchQuality: firstText(row, "matchQuality", "match_quality"),
       edition: firstText(row, "edition", "editionName", "edition_name"),
-      pageId: optionalNumber(row, "pageId") ?? optionalNumber(row, "page_id"),
+      pageId: identifier(row.pageId ?? row.page_id) ?? identifier(firstText(row, "docId", "doc_id")?.split(":")[1]),
     });
   }
   return {
