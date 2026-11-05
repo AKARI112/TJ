@@ -57,7 +57,7 @@ export function parseTurathReadingPage(
     volume: metadata.vol === undefined ? null : String(metadata.vol),
     headings: metadata.headings ?? [],
     text,
-    sourceUrl: `https://app.turath.io/book/${bookId}/${requestedPage}`,
+    sourceUrl: `https://app.turath.io/book/${bookId}?page=${requestedPage}`,
   };
 }
 
