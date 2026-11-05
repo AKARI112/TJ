@@ -57,7 +57,7 @@ const entries: CatalogEntry[] = [
   ...turathRows.map(([id, title, author, category]) => ({
     id: String(id), title, author, section: categories.get(category) ?? "تراث إسلامي",
     genre: turathGenre(category),
-    source: "turath" as const, url: `https://app.turath.io/book/${id}`,
+    source: "turath" as const, url: `/library/turath/${id}`,
     pdf: false, text: false,
   })),
 ];
@@ -110,4 +110,48 @@ export function getIslamicSnapshotPage(options: { offset?: number; limit?: numbe
   const raw = options.genre ? islamicRows.filter((row) => row[3] === options.genre) : islamicRows;
   const books = raw.slice(offset, offset + limit).map((row) => findIslamicSnapshotBook(row[0])!).filter(Boolean);
   return { books, total: raw.length, offset, limit };
+}
+
+/**
+ * Library readers use only verified book IDs from the bundled Turath index.
+ * Page text itself is always fetched live from the original Turath service.
+ */
+export function findTurathSnapshotBook(id: number) {
+  const record = turathRows.find((row) => row[0] === id);
+  if (!record) return null;
+  const [bookId, title, author, categoryId] = record;
+  return {
+    id: bookId,
+    title,
+    author,
+    section: categories.get(categoryId) ?? "تراث إسلامي",
+    sourceUrl: `https://app.turath.io/book/${bookId}`,
+  };
+}
+
+function normalizedBibliography(value: string) {
+  return normalizeArabicSearch(value)
+    .replace(/[^\p{L}\p{N}\s]/gu, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/**
+ * Only offer a cross-provider alternative when *both* normalized title and
+ * identifiable author match; matching a title alone can conflate distinct works.
+ * We do not silently claim that Islamic App and Turath use the same edition.
+ */
+export function findMatchingTurathBook(title: string, author: string) {
+  const wantedTitle = normalizedBibliography(title);
+  const wantedAuthor = normalizedBibliography(author);
+  if (!wantedTitle || wantedAuthor.length < 4) return null;
+  const candidates = turathRows.filter((row) => {
+    if (normalizedBibliography(row[1]) !== wantedTitle) return false;
+    const foundAuthor = normalizedBibliography(row[2]);
+    return foundAuthor === wantedAuthor ||
+      (foundAuthor.length >= 6 && wantedAuthor.includes(foundAuthor)) ||
+      (wantedAuthor.length >= 6 && foundAuthor.includes(wantedAuthor));
+  });
+  if (candidates.length !== 1) return null;
+  return findTurathSnapshotBook(candidates[0]![0]);
 }

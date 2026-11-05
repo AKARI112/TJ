@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { BookOpenText, ExternalLink, FileText } from "lucide-react";
 import { getLibraryBook, getLibraryBookText, libraryPdfUrl } from "@/lib/islamic/providers/library/islamic-app";
-import { findIslamicSnapshotBook } from "@/lib/islamic/providers/library/catalog-snapshots";
+import { findIslamicSnapshotBook, findMatchingTurathBook } from "@/lib/islamic/providers/library/catalog-snapshots";
 
 type Props = { params: Promise<{ slug: string }>; searchParams: Promise<{ view?: string; section?: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -23,6 +23,7 @@ export default async function LibraryBookPage({ params, searchParams }: Props) {
     const local = findIslamicSnapshotBook(slug);
     if (!local) notFound();
     const externalUrl = `https://islamic.app/library/${encodeURIComponent(slug)}`;
+    const alternative = findMatchingTurathBook(local.titleArabic, local.authorArabic);
     return <main className="book-detail">
       <header className="page-intro">
         <p className="eyebrow text-accent">المكتبة · Islamic App</p>
@@ -32,9 +33,11 @@ export default async function LibraryBookPage({ params, searchParams }: Props) {
       <section className="rounded-2xl border border-border bg-card p-6">
         <BookOpenText className="mb-3 size-7 text-primary" aria-hidden="true" />
         <h2 className="text-xl font-bold">بيانات الكتاب محفوظة في الفهرس المحلي</h2>
-        <p className="mt-3 text-sm leading-7 text-muted-foreground">خادم المكتبة الخارجي لا يقبل طلبات القراءة من خادمنا حاليًا. يمكنك فتح النسخة الأصلية لدى مصدرها، دون عرض نص غير موثق أو الادعاء بتوفر ملف غير متحقق منه.</p>
+        <p className="mt-3 text-sm leading-7 text-muted-foreground">فهرس Islamic App يوفر بيانات هذا الكتاب، لكن النص الكامل غير متاح لخادمنا حاليًا. إذا توفرت نسخة مطابقة في تراث، يمكنك قراءتها هنا مباشرة مع إظهار مصدرها وطبعتها. وقد تختلف النسختان في الصفحات والتحقيق.</p>
         <div className="mt-5 flex flex-wrap gap-3">
-          <a href={externalUrl} target="_blank" rel="noopener noreferrer" className="primary-link"><ExternalLink className="size-4" />قراءة الكتاب لدى المصدر</a>
+          {alternative && <a href={`/library/turath/${alternative.id}`} className="primary-link"><BookOpenText className="size-4" />قراءة مباشرة داخل ذُو الجلال · نسخة تراث</a>}
+          <a href={externalUrl} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-border px-4 font-semibold"><ExternalLink className="size-4" />فتح نسخة Islamic App الأصلية</a>
+          {!alternative && <a href={`/library?source=turath&q=${encodeURIComponent(local.titleArabic)}`} className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-border px-4 font-semibold"><BookOpenText className="size-4" />البحث عن نسخة في تراث</a>}
           <a href="/library" className="inline-flex min-h-11 items-center rounded-xl border border-border px-4 font-semibold">العودة إلى المكتبة</a>
         </div>
       </section>
