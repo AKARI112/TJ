@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ArrowRight, BookOpenText, ExternalLink, Search, ShieldCheck } from "lucide-react";
 import { searchShamelaText, ShamelaSourceError } from "@/lib/islamic/providers/library/quran-gallery";
+import { shamelaReaderLink } from "@/lib/islamic/providers/library/shamela-page";
 import {
   DEFAULT_SHAMELA_SCOPE, isShamelaScope, SHAMELA_SCOPES,
   type ShamelaScope, type ShamelaSearch,
@@ -135,6 +136,7 @@ export default async function ShamelaLibraryPage({ searchParams }: { searchParam
                 <span>{matchedInLabel[hit.matchedIn]}</span>
               </div>
             </div>
+            {shamelaReaderLink(hit.sourceUrl) && <a href={shamelaReaderLink(hit.sourceUrl)!} className="inline-flex min-h-10 shrink-0 items-center gap-2 rounded-xl bg-primary px-3 text-sm font-semibold text-primary-foreground">قراءة الصفحة كاملة هنا</a>}
             {hit.sourceUrl && <a href={hit.sourceUrl} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-10 shrink-0 items-center gap-2 rounded-xl border border-border px-3 text-sm font-semibold hover:bg-muted">
               <ExternalLink className="size-4" />عرض الصفحة الأصلية
             </a>}
